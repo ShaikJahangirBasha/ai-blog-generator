@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ==========================================
+   Tailwind Dark Mode
+========================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================
+   Reset
+========================================== */
+
+* {
+  margin: 1;
+  padding: 1;
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   Root
+========================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+html {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ==========================================
+   Body
+========================================== */
+
+body {
+  font-family: Inter, sans-serif;
+  background: #f8fafc;
+  color: #111827;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ==========================================
+   Light Theme
+========================================== */
+
+html.light,
+html.light body {
+  background: #f8fafc;
+  color: #111827;
+}
+
+/* ==========================================
+   Dark Theme
+========================================== */
+
+html.dark,
+html.dark body {
+  background: #020617;
+  color: #f8fafc;
+}
+
+/* ==========================================
+   Smooth Theme Transitions
+========================================== */
+
+html,
+body,
+button,
+input,
+textarea,
+select,
+main,
+section,
+aside,
+nav,
+header,
+footer,
+div {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* ==========================================
+   Scrollbar
+========================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ==========================================
+   Dark Scrollbar
+========================================== */
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
