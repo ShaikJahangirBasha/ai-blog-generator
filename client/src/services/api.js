@@ -8,20 +8,38 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-/* ===========================================
+/* ==========================================
+   API Base URL
+========================================== */
+
+/*
+  Development:
+  Uses localhost automatically.
+
+  Production:
+  Set VITE_API_URL in your frontend hosting
+  environment variables.
+*/
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
+
+/* ==========================================
    Axios Instance
-=========================================== */
+========================================== */
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: API_BASE_URL,
+
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-/* ===========================================
+/* ==========================================
    Wait For Firebase Auth
-=========================================== */
+========================================== */
 
 const waitForUser = () => {
   return new Promise((resolve) => {
@@ -41,9 +59,9 @@ const waitForUser = () => {
   });
 };
 
-/* ===========================================
+/* ==========================================
    Attach Firebase Token
-=========================================== */
+========================================== */
 
 api.interceptors.request.use(
   async (config) => {
@@ -64,27 +82,28 @@ api.interceptors.request.use(
       return Promise.reject(error);
     }
   },
+
   (error) =>
     Promise.reject(error)
 );
 
-/* ===========================================
+/* ==========================================
    Chat APIs
-=========================================== */
+========================================== */
 
 /*
- * Send a message and generation settings
- * to the backend.
- *
- * generationSettings contains:
- *
- * {
- *   category: "Technology",
- *   tone: "Professional",
- *   length: "1000 Words",
- *   language: "Telugu"
- * }
- */
+  Send a message and generation settings
+  to the backend.
+
+  generationSettings:
+
+  {
+    category: "Technology",
+    tone: "Professional",
+    length: "1000 Words",
+    language: "English"
+  }
+*/
 
 export const sendMessage = async (
   conversationId,
@@ -121,9 +140,9 @@ export const sendMessage = async (
   return response.data;
 };
 
-/* ===========================================
+/* ==========================================
    Get Conversations
-=========================================== */
+========================================== */
 
 export const getConversations =
   async () => {
@@ -133,9 +152,9 @@ export const getConversations =
     return response.data;
   };
 
-/* ===========================================
+/* ==========================================
    Get Conversation
-=========================================== */
+========================================== */
 
 export const getConversation =
   async (id) => {
@@ -147,9 +166,9 @@ export const getConversation =
     return response.data;
   };
 
-/* ===========================================
+/* ==========================================
    Rename Conversation
-=========================================== */
+========================================== */
 
 export const renameConversation =
   async (
@@ -167,9 +186,9 @@ export const renameConversation =
     return response.data;
   };
 
-/* ===========================================
+/* ==========================================
    Delete Conversation
-=========================================== */
+========================================== */
 
 export const deleteConversation =
   async (id) => {
@@ -181,9 +200,9 @@ export const deleteConversation =
     return response.data;
   };
 
-/* ===========================================
+/* ==========================================
    Clear History
-=========================================== */
+========================================== */
 
 export const clearHistory =
   async () => {
