@@ -12,19 +12,35 @@ import {
    Firebase Admin Configuration
 ========================================== */
 
-const firebaseConfig = {
-  projectId:
-    process.env.FIREBASE_PROJECT_ID,
+let serviceAccount;
 
-  clientEmail:
-    process.env.FIREBASE_CLIENT_EMAIL,
+try {
+  const encodedServiceAccount =
+    process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
 
-  privateKey:
-    process.env.FIREBASE_PRIVATE_KEY?.replace(
-      /\\n/g,
-      "\n"
-    ),
-};
+  if (!encodedServiceAccount) {
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT_BASE64 is not configured."
+    );
+  }
+
+  const decodedServiceAccount =
+    Buffer.from(
+      encodedServiceAccount,
+      "base64"
+    ).toString("utf8");
+
+  serviceAccount =
+    JSON.parse(decodedServiceAccount);
+
+} catch (error) {
+  console.error(
+    "❌ Failed to load Firebase service account:",
+    error.message
+  );
+
+  throw error;
+}
 
 /* ==========================================
    Initialize Firebase Admin
@@ -32,9 +48,7 @@ const firebaseConfig = {
 
 if (!getApps().length) {
   initializeApp({
-    credential: cert(
-      firebaseConfig
-    ),
+    credential: cert(serviceAccount),
   });
 
   console.log(
