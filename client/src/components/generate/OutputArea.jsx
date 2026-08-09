@@ -96,6 +96,7 @@ function MessageBubble({ message }) {
       <div
         className={`
           flex
+          w-full
           max-w-4xl
           ${
             isAI
@@ -110,6 +111,7 @@ function MessageBubble({ message }) {
 
         <div
           className={`
+            w-full
             rounded-3xl
             px-6
             py-5
@@ -128,6 +130,7 @@ function MessageBubble({ message }) {
                   dark:text-slate-100
                 `
                 : `
+                  max-w-[85%]
                   bg-blue-600
                   text-white
                 `
@@ -141,7 +144,7 @@ function MessageBubble({ message }) {
           {isAI && (
             <div
               className="
-                mb-4
+                mb-5
                 flex
                 items-center
                 justify-end
@@ -209,16 +212,17 @@ function MessageBubble({ message }) {
 
           <div
             className={`
-              prose
+              w-full
               max-w-none
+              break-words
 
               ${
                 isAI
                   ? `
-                    prose-slate
-                    dark:prose-invert
+                    text-slate-800
+                    dark:text-slate-100
                   `
-                  : "prose-invert"
+                  : "text-white"
               }
             `}
           >
@@ -227,6 +231,329 @@ function MessageBubble({ message }) {
                 remarkGfm,
               ]}
               components={{
+                /* ==================================
+                   H1 - Main Article Title
+                ================================== */
+
+                h1({ children }) {
+                  return (
+                    <h1
+                      className="
+                        mb-8
+                        mt-2
+                        border-b
+                        border-slate-200
+                        pb-5
+                        text-3xl
+                        font-extrabold
+                        leading-tight
+                        tracking-tight
+                        text-slate-900
+
+                        sm:text-4xl
+
+                        dark:border-slate-700
+                        dark:text-white
+                      "
+                    >
+                      {children}
+                    </h1>
+                  );
+                },
+
+                /* ==================================
+                   H2 - Main Sections
+                ================================== */
+
+                h2({ children }) {
+                  return (
+                    <h2
+                      className="
+                        mb-5
+                        mt-10
+                        border-l-4
+                        border-blue-600
+                        pl-4
+                        text-2xl
+                        font-bold
+                        leading-tight
+                        text-slate-900
+
+                        sm:text-3xl
+
+                        dark:border-blue-400
+                        dark:text-white
+                      "
+                    >
+                      {children}
+                    </h2>
+                  );
+                },
+
+                /* ==================================
+                   H3 - Subsections
+                ================================== */
+
+                h3({ children }) {
+                  return (
+                    <h3
+                      className="
+                        mb-3
+                        mt-8
+                        text-xl
+                        font-bold
+                        leading-snug
+                        text-slate-800
+
+                        sm:text-2xl
+
+                        dark:text-slate-100
+                      "
+                    >
+                      {children}
+                    </h3>
+                  );
+                },
+
+                /* ==================================
+                   H4
+                ================================== */
+
+                h4({ children }) {
+                  return (
+                    <h4
+                      className="
+                        mb-3
+                        mt-6
+                        text-lg
+                        font-bold
+                        text-slate-800
+
+                        dark:text-slate-100
+                      "
+                    >
+                      {children}
+                    </h4>
+                  );
+                },
+
+                /* ==================================
+                   Paragraph
+                ================================== */
+
+                p({ children }) {
+                  return (
+                    <p
+                      className="
+                        mb-5
+                        text-[15px]
+                        leading-8
+                        text-slate-700
+
+                        sm:text-base
+
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </p>
+                  );
+                },
+
+                /* ==================================
+                   Strong / Bold
+                ================================== */
+
+                strong({ children }) {
+                  return (
+                    <strong
+                      className="
+                        font-bold
+                        text-slate-900
+
+                        dark:text-white
+                      "
+                    >
+                      {children}
+                    </strong>
+                  );
+                },
+
+                /* ==================================
+                   Emphasis
+                ================================== */
+
+                em({ children }) {
+                  return (
+                    <em
+                      className="
+                        italic
+                        text-slate-700
+
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </em>
+                  );
+                },
+
+                /* ==================================
+                   Unordered List
+                ================================== */
+
+                ul({ children }) {
+                  return (
+                    <ul
+                      className="
+                        mb-6
+                        ml-6
+                        list-disc
+                        space-y-3
+                        pl-2
+                        text-[15px]
+                        leading-7
+                        text-slate-700
+
+                        sm:text-base
+
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </ul>
+                  );
+                },
+
+                /* ==================================
+                   Ordered List
+                ================================== */
+
+                ol({ children }) {
+                  return (
+                    <ol
+                      className="
+                        mb-6
+                        ml-6
+                        list-decimal
+                        space-y-3
+                        pl-2
+                        text-[15px]
+                        leading-7
+                        text-slate-700
+
+                        sm:text-base
+
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </ol>
+                  );
+                },
+
+                /* ==================================
+                   List Item
+                ================================== */
+
+                li({ children }) {
+                  return (
+                    <li
+                      className="
+                        pl-1
+                        leading-7
+                      "
+                    >
+                      {children}
+                    </li>
+                  );
+                },
+
+                /* ==================================
+                   Links
+                ================================== */
+
+                a({ href, children }) {
+                  return (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="
+                        font-medium
+                        text-blue-600
+                        underline
+                        decoration-blue-300
+                        underline-offset-4
+                        transition
+                        hover:text-blue-700
+
+                        dark:text-blue-400
+                        dark:decoration-blue-700
+                        dark:hover:text-blue-300
+                      "
+                    >
+                      {children}
+                    </a>
+                  );
+                },
+
+                /* ==================================
+                   Horizontal Divider
+                ================================== */
+
+                hr() {
+                  return (
+                    <div
+                      className="
+                        my-10
+                        h-px
+                        w-full
+                        bg-gradient-to-r
+                        from-transparent
+                        via-slate-300
+                        to-transparent
+
+                        dark:via-slate-600
+                      "
+                    />
+                  );
+                },
+
+                /* ==================================
+                   Blockquote
+                ================================== */
+
+                blockquote({ children }) {
+                  return (
+                    <blockquote
+                      className="
+                        my-6
+                        rounded-2xl
+                        border-l-4
+                        border-blue-500
+                        bg-blue-50
+                        px-5
+                        py-4
+                        text-[15px]
+                        italic
+                        leading-7
+                        text-slate-700
+
+                        dark:border-blue-400
+                        dark:bg-blue-950/30
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </blockquote>
+                  );
+                },
+
+                /* ==================================
+                   Inline / Code Blocks
+                ================================== */
+
                 code({
                   inline,
                   className,
@@ -238,31 +565,217 @@ function MessageBubble({ message }) {
                       className || ""
                     );
 
-                  return !inline &&
-                    match ? (
-                    <SyntaxHighlighter
-                      style={oneDark}
-                      language={
-                        match[1]
-                      }
-                      PreTag="div"
-                    >
-                      {String(
-                        children
-                      ).replace(
-                        /\n$/,
-                        ""
-                      )}
-                    </SyntaxHighlighter>
-                  ) : (
+                  if (!inline && match) {
+                    return (
+                      <div
+                        className="
+                          my-7
+                          overflow-hidden
+                          rounded-2xl
+                          border
+                          border-slate-700
+                          bg-[#111827]
+                          shadow-lg
+                        "
+                      >
+                        <div
+                          className="
+                            flex
+                            items-center
+                            justify-between
+                            border-b
+                            border-slate-700
+                            bg-[#0f172a]
+                            px-4
+                            py-2
+                            text-xs
+                            text-slate-400
+                          "
+                        >
+                          <span>
+                            {match[1]}
+                          </span>
+
+                          <span>
+                            Code
+                          </span>
+                        </div>
+
+                        <SyntaxHighlighter
+                          style={oneDark}
+                          language={
+                            match[1]
+                          }
+                          PreTag="div"
+                          customStyle={{
+                            margin: 0,
+                            padding: "20px",
+                            background:
+                              "#111827",
+                            fontSize:
+                              "0.875rem",
+                            lineHeight:
+                              "1.7",
+                          }}
+                        >
+                          {String(
+                            children
+                          ).replace(
+                            /\n$/,
+                            ""
+                          )}
+                        </SyntaxHighlighter>
+                      </div>
+                    );
+                  }
+
+                  return (
                     <code
-                      className={
-                        className
-                      }
+                      className="
+                        rounded-md
+                        bg-slate-100
+                        px-1.5
+                        py-0.5
+                        font-mono
+                        text-[0.9em]
+                        text-blue-700
+
+                        dark:bg-slate-800
+                        dark:text-blue-300
+                      "
                       {...props}
                     >
                       {children}
                     </code>
+                  );
+                },
+
+                /* ==================================
+                   Pre - Fenced Code / ASCII Diagrams
+                ================================== */
+
+                pre({ children }) {
+                  return (
+                    <div
+                      className="
+                        my-7
+                        overflow-x-auto
+                        rounded-2xl
+                        border
+                        border-slate-200
+                        bg-slate-950
+                        shadow-lg
+
+                        dark:border-slate-700
+                      "
+                    >
+                      {children}
+                    </div>
+                  );
+                },
+
+                /* ==================================
+                   Tables
+                ================================== */
+
+                table({ children }) {
+                  return (
+                    <div
+                      className="
+                        my-7
+                        w-full
+                        overflow-x-auto
+                        rounded-2xl
+                        border
+                        border-slate-200
+
+                        dark:border-slate-700
+                      "
+                    >
+                      <table
+                        className="
+                          min-w-full
+                          border-collapse
+                          text-left
+                          text-sm
+                        "
+                      >
+                        {children}
+                      </table>
+                    </div>
+                  );
+                },
+
+                thead({ children }) {
+                  return (
+                    <thead
+                      className="
+                        bg-slate-100
+
+                        dark:bg-slate-800
+                      "
+                    >
+                      {children}
+                    </thead>
+                  );
+                },
+
+                th({ children }) {
+                  return (
+                    <th
+                      className="
+                        border-b
+                        border-slate-200
+                        px-4
+                        py-3
+                        font-bold
+                        text-slate-800
+
+                        dark:border-slate-700
+                        dark:text-white
+                      "
+                    >
+                      {children}
+                    </th>
+                  );
+                },
+
+                td({ children }) {
+                  return (
+                    <td
+                      className="
+                        border-b
+                        border-slate-200
+                        px-4
+                        py-3
+                        align-top
+                        text-slate-700
+
+                        dark:border-slate-700
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </td>
+                  );
+                },
+
+                /* ==================================
+                   Delete Table Body Border
+                ================================== */
+
+                tbody({ children }) {
+                  return (
+                    <tbody
+                      className="
+                        divide-y
+                        divide-slate-200
+
+                        dark:divide-slate-700
+                      "
+                    >
+                      {children}
+                    </tbody>
                   );
                 },
               }}
@@ -337,8 +850,7 @@ function ThinkingIndicator() {
                 duration: 0.8,
                 delay:
                   dot * 0.18,
-                ease:
-                  "easeInOut",
+                ease: "easeInOut",
               }}
               className="
                 h-2.5
@@ -389,6 +901,7 @@ function WelcomeScreen() {
           text-4xl
           font-bold
           text-slate-800
+
           sm:text-5xl
 
           dark:text-white
@@ -402,6 +915,7 @@ function WelcomeScreen() {
           mt-5
           max-w-2xl
           text-lg
+          leading-8
           text-slate-500
 
           dark:text-slate-400
@@ -444,7 +958,6 @@ function WelcomeScreen() {
                 text-left
                 shadow-sm
                 transition
-
                 hover:shadow-lg
 
                 dark:border-slate-700
@@ -466,6 +979,7 @@ function WelcomeScreen() {
                 className="
                   mt-2
                   text-sm
+                  leading-6
                   text-slate-500
 
                   dark:text-slate-400
@@ -548,8 +1062,8 @@ function OutputArea({
               flex-col
               gap-8
               px-2
-              pt-8
-              sm:pt-10
+              pt-14
+              sm:pt-16
               pb-36
             "
           >
@@ -560,7 +1074,9 @@ function OutputArea({
                     message._id ||
                     message.id
                   }
-                  message={message}
+                  message={
+                    message
+                  }
                 />
               )
             )}
@@ -600,8 +1116,8 @@ function OutputArea({
                 max-w-5xl
                 flex-col
                 px-2
-                pt-8
-                sm:pt-10
+                pt-14
+                sm:pt-16
               "
             >
               {/* ==================================
@@ -623,6 +1139,8 @@ function OutputArea({
                     text-3xl
                     font-bold
                     text-slate-800
+
+                    sm:text-4xl
 
                     dark:text-white
                   "
