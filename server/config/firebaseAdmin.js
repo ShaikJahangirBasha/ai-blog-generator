@@ -1,15 +1,50 @@
-import { initializeApp, cert, getApps } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import {
+  initializeApp,
+  cert,
+  getApps,
+} from "firebase-admin/app";
 
-import serviceAccount from "../firebase/serviceAccountKey.json" with { type: "json" };
+import {
+  getAuth,
+} from "firebase-admin/auth";
+
+/* ==========================================
+   Firebase Admin Configuration
+========================================== */
+
+const firebaseConfig = {
+  projectId:
+    process.env.FIREBASE_PROJECT_ID,
+
+  clientEmail:
+    process.env.FIREBASE_CLIENT_EMAIL,
+
+  privateKey:
+    process.env.FIREBASE_PRIVATE_KEY?.replace(
+      /\\n/g,
+      "\n"
+    ),
+};
+
+/* ==========================================
+   Initialize Firebase Admin
+========================================== */
 
 if (!getApps().length) {
   initializeApp({
-    credential: cert(serviceAccount),
+    credential: cert(
+      firebaseConfig
+    ),
   });
 
-  console.log("✅ Firebase Admin Initialized");
+  console.log(
+    "✅ Firebase Admin Initialized"
+  );
 }
+
+/* ==========================================
+   Firebase Admin Auth
+========================================== */
 
 const auth = getAuth();
 
