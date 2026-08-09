@@ -1,27 +1,74 @@
 import express from "express";
 import cors from "cors";
 
-
 import chatRoutes from "./routes/chatRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
-
-
 
 const app = express();
 
 /* ==========================================
-   Middlewares
+   Allowed Frontend Origins
+========================================== */
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+/* ==========================================
+   CORS Configuration
 ========================================== */
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header
+      // such as Postman and server-to-server requests.
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.warn(
+        `⚠️ CORS blocked origin: ${origin}`
+      );
+
+      return callback(null, false);
+    },
+
     credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
+/* ==========================================
+   Body Parsers
+========================================== */
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 /* ==========================================
    Health Check
@@ -38,7 +85,10 @@ app.get("/", (req, res) => {
    Routes
 ========================================== */
 
-app.use("/api/chat", chatRoutes);
+app.use(
+  "/api/chat",
+  chatRoutes
+);
 
 /* ==========================================
    404
