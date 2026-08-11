@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   X,
   Sun,
@@ -7,11 +8,7 @@ import {
   Info,
   Trash2,
 } from "lucide-react";
-
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useSettings } from "../../context/SettingsContext";
 import useAuth from "../../hooks/useAuth";
@@ -19,23 +16,48 @@ import useLanguage from "../../hooks/useLanguage";
 import { useBlogs } from "../../context/BlogContext";
 
 function SettingsDrawer() {
-  const {
-    drawerOpen,
-    setDrawerOpen,
-    theme,
-    setTheme,
-  } = useSettings();
-
+  const { drawerOpen, setDrawerOpen, theme, setTheme } = useSettings();
   const { logout } = useAuth();
-
   const { blogs } = useBlogs();
-
   const t = useLanguage();
+
+  /* ==========================================
+     Prevent Body Scroll When Drawer Is Open
+  ========================================== */
+  useEffect(() => {
+    if (drawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawerOpen]);
+
+  /* ==========================================
+     Close Drawer on Escape Key
+  ========================================== */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setDrawerOpen(false);
+      }
+    };
+
+    if (drawerOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [drawerOpen, setDrawerOpen]);
 
   /* ==========================================
      Logout
   ========================================== */
-
   const handleLogout = async () => {
     await logout();
     setDrawerOpen(false);
@@ -44,17 +66,12 @@ function SettingsDrawer() {
   /* ==========================================
      Clear History
   ========================================== */
-
   const handleClearHistory = () => {
-    const confirmed =
-      window.confirm(
-        t.settings.clearConfirmation
-      );
+    const confirmed = window.confirm(t.settings.clearConfirmation);
 
     if (!confirmed) return;
 
     localStorage.removeItem("blogs");
-
     window.location.reload();
   };
 
@@ -65,7 +82,6 @@ function SettingsDrawer() {
           {/* ==========================================
               Overlay
           ========================================== */}
-
           <motion.div
             className="
               fixed
@@ -74,32 +90,23 @@ function SettingsDrawer() {
               bg-black/40
               backdrop-blur-[2px]
             "
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
-            onClick={() =>
-              setDrawerOpen(false)
-            }
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDrawerOpen(false)}
           />
 
           {/* ==========================================
-              Drawer
+              Drawer Container
           ========================================== */}
-
           <motion.div
             className="
               fixed
+              inset-y-0
               right-0
-              top-0
               z-50
               flex
-              h-screen
+              h-dvh
               w-full
               max-w-md
               flex-col
@@ -110,29 +117,18 @@ function SettingsDrawer() {
               shadow-2xl
               transition-colors
               duration-300
-
               dark:border-slate-800
               dark:bg-slate-950
               dark:text-slate-100
             "
-            initial={{
-              x: "100%",
-            }}
-            animate={{
-              x: 0,
-            }}
-            exit={{
-              x: "100%",
-            }}
-            transition={{
-              duration: 0.25,
-              ease: "easeOut",
-            }}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {/* ==========================================
                 Header
             ========================================== */}
-
             <div
               className="
                 flex
@@ -140,43 +136,26 @@ function SettingsDrawer() {
                 justify-between
                 border-b
                 border-slate-200
-                px-6
-                py-5
-
+                px-4
+                py-4
                 dark:border-slate-800
+                sm:px-6
+                sm:py-5
               "
             >
               <div>
-                <h2
-                  className="
-                    text-xl
-                    font-bold
-                    text-slate-800
-
-                    dark:text-white
-                  "
-                >
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white">
                   {t.settings.title}
                 </h2>
-
-                <p
-                  className="
-                    mt-1
-                    text-sm
-                    text-slate-500
-
-                    dark:text-slate-400
-                  "
-                >
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   Customize your Blog Studio
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={() =>
-                  setDrawerOpen(false)
-                }
+                onClick={() => setDrawerOpen(false)}
+                aria-label="Close settings"
                 className="
                   rounded-xl
                   p-2
@@ -184,12 +163,10 @@ function SettingsDrawer() {
                   transition
                   hover:bg-slate-100
                   hover:text-slate-800
-
                   dark:text-slate-400
                   dark:hover:bg-slate-800
                   dark:hover:text-white
                 "
-                aria-label="Close settings"
               >
                 <X size={22} />
               </button>
@@ -198,40 +175,18 @@ function SettingsDrawer() {
             {/* ==========================================
                 Content
             ========================================== */}
-
-            <div
-              className="
-                flex-1
-                space-y-8
-                overflow-y-auto
-                p-6
-              "
-            >
-              {/* ========================================
-                  Appearance
-              ======================================== */}
-
+            <div className="flex-1 space-y-8 overflow-y-auto p-4 sm:p-6">
+              {/* Appearance */}
               <div>
-                <h3
-                  className="
-                    mb-3
-                    font-semibold
-                    text-slate-800
-
-                    dark:text-slate-100
-                  "
-                >
+                <h3 className="mb-3 font-semibold text-slate-800 dark:text-slate-100">
                   {t.settings.appearance}
                 </h3>
 
                 <div className="space-y-2">
                   {/* Light */}
-
                   <button
                     type="button"
-                    onClick={() =>
-                      setTheme("light")
-                    }
+                    onClick={() => setTheme("light")}
                     className={`
                       flex
                       w-full
@@ -242,7 +197,6 @@ function SettingsDrawer() {
                       p-3
                       text-left
                       transition
-
                       ${
                         theme === "light"
                           ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
@@ -251,30 +205,16 @@ function SettingsDrawer() {
                     `}
                   >
                     <Sun size={18} />
-
                     <div>
-                      <p className="font-medium">
-                        Light
-                      </p>
-
-                      <p
-                        className="
-                          text-xs
-                          opacity-70
-                        "
-                      >
-                        Bright appearance
-                      </p>
+                      <p className="font-medium">Light</p>
+                      <p className="text-xs opacity-70">Bright appearance</p>
                     </div>
                   </button>
 
                   {/* Dark */}
-
                   <button
                     type="button"
-                    onClick={() =>
-                      setTheme("dark")
-                    }
+                    onClick={() => setTheme("dark")}
                     className={`
                       flex
                       w-full
@@ -285,7 +225,6 @@ function SettingsDrawer() {
                       p-3
                       text-left
                       transition
-
                       ${
                         theme === "dark"
                           ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
@@ -294,30 +233,16 @@ function SettingsDrawer() {
                     `}
                   >
                     <Moon size={18} />
-
                     <div>
-                      <p className="font-medium">
-                        Dark
-                      </p>
-
-                      <p
-                        className="
-                          text-xs
-                          opacity-70
-                        "
-                      >
-                        Dark appearance
-                      </p>
+                      <p className="font-medium">Dark</p>
+                      <p className="text-xs opacity-70">Dark appearance</p>
                     </div>
                   </button>
 
                   {/* System */}
-
                   <button
                     type="button"
-                    onClick={() =>
-                      setTheme("system")
-                    }
+                    onClick={() => setTheme("system")}
                     className={`
                       flex
                       w-full
@@ -328,7 +253,6 @@ function SettingsDrawer() {
                       p-3
                       text-left
                       transition
-
                       ${
                         theme === "system"
                           ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
@@ -337,105 +261,37 @@ function SettingsDrawer() {
                     `}
                   >
                     <Monitor size={18} />
-
                     <div>
-                      <p className="font-medium">
-                        System
-                      </p>
-
-                      <p
-                        className="
-                          text-xs
-                          opacity-70
-                        "
-                      >
-                        Follow device theme
-                      </p>
+                      <p className="font-medium">System</p>
+                      <p className="text-xs opacity-70">Follow device theme</p>
                     </div>
                   </button>
                 </div>
               </div>
 
-              {/* ========================================
-                  About
-              ======================================== */}
-
+              {/* About */}
               <div>
-                <div
-                  className="
-                    mb-3
-                    flex
-                    items-center
-                    gap-2
-                  "
-                >
-                  <Info
-                    size={18}
-                    className="
-                      text-slate-600
-
-                      dark:text-slate-300
-                    "
-                  />
-
-                  <h3
-                    className="
-                      font-semibold
-                      text-slate-800
-
-                      dark:text-slate-100
-                    "
-                  >
+                <div className="mb-3 flex items-center gap-2">
+                  <Info size={18} className="text-slate-600 dark:text-slate-300" />
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100">
                     {t.settings.about}
                   </h3>
                 </div>
 
-                <div
-                  className="
-                    rounded-xl
-                    border
-                    border-slate-200
-                    bg-slate-50
-                    p-4
-
-                    dark:border-slate-800
-                    dark:bg-slate-900
-                  "
-                >
-                  <p
-                    className="
-                      text-sm
-                      text-slate-600
-
-                      dark:text-slate-300
-                    "
-                  >
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     Blog Studio v1.0.0
                   </p>
-
-                  <p
-                    className="
-                      mt-1
-                      text-sm
-                      text-slate-500
-
-                      dark:text-slate-400
-                    "
-                  >
-                    {blogs.length} Blogs Generated
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                    {blogs?.length || 0} Blogs Generated
                   </p>
                 </div>
               </div>
 
-              {/* ========================================
-                  Clear History
-              ======================================== */}
-
+              {/* Clear History */}
               <button
                 type="button"
-                onClick={
-                  handleClearHistory
-                }
+                onClick={handleClearHistory}
                 className="
                   flex
                   w-full
@@ -454,14 +310,10 @@ function SettingsDrawer() {
                 "
               >
                 <Trash2 size={18} />
-
                 {t.settings.clearHistory}
               </button>
 
-              {/* ========================================
-                  Logout
-              ======================================== */}
-
+              {/* Logout */}
               <button
                 type="button"
                 onClick={handleLogout}
@@ -483,7 +335,6 @@ function SettingsDrawer() {
                 "
               >
                 <LogOut size={18} />
-
                 {t.settings.logout}
               </button>
             </div>
