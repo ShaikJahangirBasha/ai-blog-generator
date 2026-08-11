@@ -23,6 +23,7 @@ function PromptBar({
   const {
     sidebarWidth,
     isMobile,
+    mobileOpen,
   } = useSidebar();
 
   const [prompt, setPrompt] =
@@ -39,11 +40,76 @@ function PromptBar({
       language: "English",
     });
 
+  const [isSmallScreen, setIsSmallScreen] =
+    useState(() => {
+      if (typeof window === "undefined") {
+        return false;
+      }
+
+      return window.matchMedia(
+        "(max-width: 1023px)"
+      ).matches;
+    });
+
   const textareaRef =
     useRef(null);
 
   const wrapperRef =
     useRef(null);
+
+  /* ==========================================
+     Small Screen Detection
+  ========================================== */
+
+  useEffect(() => {
+    const mediaQuery =
+      window.matchMedia(
+        "(max-width: 1023px)"
+      );
+
+    const handleScreenChange = (
+      event
+    ) => {
+      setIsSmallScreen(
+        event.matches
+      );
+    };
+
+    setIsSmallScreen(
+      mediaQuery.matches
+    );
+
+    mediaQuery.addEventListener(
+      "change",
+      handleScreenChange
+    );
+
+    return () => {
+      mediaQuery.removeEventListener(
+        "change",
+        handleScreenChange
+      );
+    };
+  }, []);
+
+  /*
+   * Extra-small phones, small phones,
+   * and tablets:
+   *
+   * Sidebar open
+   *       ↓
+   * PromptBar hidden
+   *
+   * Sidebar closed
+   *       ↓
+   * PromptBar visible
+   *
+   * Desktop is never affected.
+   */
+
+  const hidePromptBar =
+    isSmallScreen &&
+    mobileOpen;
 
   /* ==========================================
      Close Settings
@@ -86,6 +152,16 @@ function PromptBar({
   }, []);
 
   /* ==========================================
+     Close Settings When Sidebar Opens
+  ========================================== */
+
+  useEffect(() => {
+    if (hidePromptBar) {
+      setOpen(false);
+    }
+  }, [hidePromptBar]);
+
+  /* ==========================================
      Auto Height
   ========================================== */
 
@@ -109,7 +185,9 @@ function PromptBar({
   const handleSettingsChange = (
     settings
   ) => {
-    setGenerationSettings(settings);
+    setGenerationSettings(
+      settings
+    );
   };
 
   /* ==========================================
@@ -117,9 +195,13 @@ function PromptBar({
   ========================================== */
 
   const handleSubmit = () => {
-    const value = prompt.trim();
+    const value =
+      prompt.trim();
 
-    if (!value || loading) {
+    if (
+      !value ||
+      loading
+    ) {
       return;
     }
 
@@ -135,6 +217,21 @@ function PromptBar({
 
     setPrompt("");
   };
+
+  /*
+   * ==========================================
+   * Hide PromptBar On Small Screens
+   * While Sidebar Is Open
+   * ==========================================
+   *
+   * We return null instead of simply using
+   * display:none so the fixed prompt bar does
+   * not occupy or interfere with the sidebar.
+   */
+
+  if (hidePromptBar) {
+    return null;
+  }
 
   return (
     <motion.div

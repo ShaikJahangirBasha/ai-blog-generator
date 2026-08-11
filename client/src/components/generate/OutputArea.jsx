@@ -87,17 +87,23 @@ function MessageBubble({ message }) {
       transition={{
         duration: 0.25,
       }}
-      className={`mb-8 flex ${
-        isAI
-          ? "justify-start"
-          : "justify-end"
-      }`}
+      className={`
+        mb-8
+        flex
+        min-w-0
+        max-w-full
+        ${
+          isAI
+            ? "justify-start"
+            : "justify-end"
+        }
+      `}
     >
       <div
         className={`
           flex
-          w-full
-          max-w-4xl
+          min-w-0
+          max-w-full
           ${
             isAI
               ? ""
@@ -111,7 +117,8 @@ function MessageBubble({ message }) {
 
         <div
           className={`
-            w-full
+            min-w-0
+            max-w-full
             rounded-3xl
             px-6
             py-5
@@ -130,11 +137,15 @@ function MessageBubble({ message }) {
                   dark:text-slate-100
                 `
                 : `
-                  max-w-[85%]
                   bg-blue-600
                   text-white
                 `
             }
+
+            max-[1023px]:w-full
+            max-[1023px]:rounded-2xl
+            max-[1023px]:px-4
+            max-[1023px]:py-4
           `}
         >
           {/* ======================================
@@ -144,7 +155,7 @@ function MessageBubble({ message }) {
           {isAI && (
             <div
               className="
-                mb-5
+                mb-4
                 flex
                 items-center
                 justify-end
@@ -212,17 +223,21 @@ function MessageBubble({ message }) {
 
           <div
             className={`
-              w-full
+              ai-output-content
+              min-w-0
+              max-w-full
+              prose
               max-w-none
               break-words
+              overflow-hidden
 
               ${
                 isAI
                   ? `
-                    text-slate-800
-                    dark:text-slate-100
+                    prose-slate
+                    dark:prose-invert
                   `
-                  : "text-white"
+                  : "prose-invert"
               }
             `}
           >
@@ -231,329 +246,6 @@ function MessageBubble({ message }) {
                 remarkGfm,
               ]}
               components={{
-                /* ==================================
-                   H1 - Main Article Title
-                ================================== */
-
-                h1({ children }) {
-                  return (
-                    <h1
-                      className="
-                        mb-8
-                        mt-2
-                        border-b
-                        border-slate-200
-                        pb-5
-                        text-3xl
-                        font-extrabold
-                        leading-tight
-                        tracking-tight
-                        text-slate-900
-
-                        sm:text-4xl
-
-                        dark:border-slate-700
-                        dark:text-white
-                      "
-                    >
-                      {children}
-                    </h1>
-                  );
-                },
-
-                /* ==================================
-                   H2 - Main Sections
-                ================================== */
-
-                h2({ children }) {
-                  return (
-                    <h2
-                      className="
-                        mb-5
-                        mt-10
-                        border-l-4
-                        border-blue-600
-                        pl-4
-                        text-2xl
-                        font-bold
-                        leading-tight
-                        text-slate-900
-
-                        sm:text-3xl
-
-                        dark:border-blue-400
-                        dark:text-white
-                      "
-                    >
-                      {children}
-                    </h2>
-                  );
-                },
-
-                /* ==================================
-                   H3 - Subsections
-                ================================== */
-
-                h3({ children }) {
-                  return (
-                    <h3
-                      className="
-                        mb-3
-                        mt-8
-                        text-xl
-                        font-bold
-                        leading-snug
-                        text-slate-800
-
-                        sm:text-2xl
-
-                        dark:text-slate-100
-                      "
-                    >
-                      {children}
-                    </h3>
-                  );
-                },
-
-                /* ==================================
-                   H4
-                ================================== */
-
-                h4({ children }) {
-                  return (
-                    <h4
-                      className="
-                        mb-3
-                        mt-6
-                        text-lg
-                        font-bold
-                        text-slate-800
-
-                        dark:text-slate-100
-                      "
-                    >
-                      {children}
-                    </h4>
-                  );
-                },
-
-                /* ==================================
-                   Paragraph
-                ================================== */
-
-                p({ children }) {
-                  return (
-                    <p
-                      className="
-                        mb-5
-                        text-[15px]
-                        leading-8
-                        text-slate-700
-
-                        sm:text-base
-
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </p>
-                  );
-                },
-
-                /* ==================================
-                   Strong / Bold
-                ================================== */
-
-                strong({ children }) {
-                  return (
-                    <strong
-                      className="
-                        font-bold
-                        text-slate-900
-
-                        dark:text-white
-                      "
-                    >
-                      {children}
-                    </strong>
-                  );
-                },
-
-                /* ==================================
-                   Emphasis
-                ================================== */
-
-                em({ children }) {
-                  return (
-                    <em
-                      className="
-                        italic
-                        text-slate-700
-
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </em>
-                  );
-                },
-
-                /* ==================================
-                   Unordered List
-                ================================== */
-
-                ul({ children }) {
-                  return (
-                    <ul
-                      className="
-                        mb-6
-                        ml-6
-                        list-disc
-                        space-y-3
-                        pl-2
-                        text-[15px]
-                        leading-7
-                        text-slate-700
-
-                        sm:text-base
-
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </ul>
-                  );
-                },
-
-                /* ==================================
-                   Ordered List
-                ================================== */
-
-                ol({ children }) {
-                  return (
-                    <ol
-                      className="
-                        mb-6
-                        ml-6
-                        list-decimal
-                        space-y-3
-                        pl-2
-                        text-[15px]
-                        leading-7
-                        text-slate-700
-
-                        sm:text-base
-
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </ol>
-                  );
-                },
-
-                /* ==================================
-                   List Item
-                ================================== */
-
-                li({ children }) {
-                  return (
-                    <li
-                      className="
-                        pl-1
-                        leading-7
-                      "
-                    >
-                      {children}
-                    </li>
-                  );
-                },
-
-                /* ==================================
-                   Links
-                ================================== */
-
-                a({ href, children }) {
-                  return (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="
-                        font-medium
-                        text-blue-600
-                        underline
-                        decoration-blue-300
-                        underline-offset-4
-                        transition
-                        hover:text-blue-700
-
-                        dark:text-blue-400
-                        dark:decoration-blue-700
-                        dark:hover:text-blue-300
-                      "
-                    >
-                      {children}
-                    </a>
-                  );
-                },
-
-                /* ==================================
-                   Horizontal Divider
-                ================================== */
-
-                hr() {
-                  return (
-                    <div
-                      className="
-                        my-10
-                        h-px
-                        w-full
-                        bg-gradient-to-r
-                        from-transparent
-                        via-slate-300
-                        to-transparent
-
-                        dark:via-slate-600
-                      "
-                    />
-                  );
-                },
-
-                /* ==================================
-                   Blockquote
-                ================================== */
-
-                blockquote({ children }) {
-                  return (
-                    <blockquote
-                      className="
-                        my-6
-                        rounded-2xl
-                        border-l-4
-                        border-blue-500
-                        bg-blue-50
-                        px-5
-                        py-4
-                        text-[15px]
-                        italic
-                        leading-7
-                        text-slate-700
-
-                        dark:border-blue-400
-                        dark:bg-blue-950/30
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </blockquote>
-                  );
-                },
-
-                /* ==================================
-                   Inline / Code Blocks
-                ================================== */
-
                 code({
                   inline,
                   className,
@@ -565,84 +257,43 @@ function MessageBubble({ message }) {
                       className || ""
                     );
 
-                  if (!inline && match) {
-                    return (
-                      <div
-                        className="
-                          my-7
-                          overflow-hidden
-                          rounded-2xl
-                          border
-                          border-slate-700
-                          bg-[#111827]
-                          shadow-lg
-                        "
-                      >
-                        <div
-                          className="
-                            flex
-                            items-center
-                            justify-between
-                            border-b
-                            border-slate-700
-                            bg-[#0f172a]
-                            px-4
-                            py-2
-                            text-xs
-                            text-slate-400
-                          "
-                        >
-                          <span>
-                            {match[1]}
-                          </span>
-
-                          <span>
-                            Code
-                          </span>
-                        </div>
-
-                        <SyntaxHighlighter
-                          style={oneDark}
-                          language={
-                            match[1]
-                          }
-                          PreTag="div"
-                          customStyle={{
-                            margin: 0,
-                            padding: "20px",
-                            background:
-                              "#111827",
-                            fontSize:
-                              "0.875rem",
-                            lineHeight:
-                              "1.7",
-                          }}
-                        >
-                          {String(
-                            children
-                          ).replace(
-                            /\n$/,
-                            ""
-                          )}
-                        </SyntaxHighlighter>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <code
+                  return !inline &&
+                    match ? (
+                    <div
                       className="
-                        rounded-md
-                        bg-slate-100
-                        px-1.5
-                        py-0.5
-                        font-mono
-                        text-[0.9em]
-                        text-blue-700
-
-                        dark:bg-slate-800
-                        dark:text-blue-300
+                        my-4
+                        max-w-full
+                        overflow-x-auto
+                        rounded-xl
                       "
+                    >
+                      <SyntaxHighlighter
+                        style={oneDark}
+                        language={
+                          match[1]
+                        }
+                        PreTag="div"
+                        customStyle={{
+                          margin: 0,
+                          maxWidth: "100%",
+                          overflowX: "auto",
+                        }}
+                        wrapLongLines={false}
+                      >
+                        {String(
+                          children
+                        ).replace(
+                          /\n$/,
+                          ""
+                        )}
+                      </SyntaxHighlighter>
+                    </div>
+                  ) : (
+                    <code
+                      className={`
+                        ${className || ""}
+                        break-words
+                      `}
                       {...props}
                     >
                       {children}
@@ -650,132 +301,61 @@ function MessageBubble({ message }) {
                   );
                 },
 
-                /* ==================================
-                   Pre - Fenced Code / ASCII Diagrams
-                ================================== */
-
-                pre({ children }) {
+                table({
+                  children,
+                }) {
                   return (
                     <div
                       className="
-                        my-7
+                        my-5
+                        max-w-full
                         overflow-x-auto
-                        rounded-2xl
-                        border
-                        border-slate-200
-                        bg-slate-950
-                        shadow-lg
-
-                        dark:border-slate-700
+                        rounded-xl
                       "
                     >
-                      {children}
-                    </div>
-                  );
-                },
-
-                /* ==================================
-                   Tables
-                ================================== */
-
-                table({ children }) {
-                  return (
-                    <div
-                      className="
-                        my-7
-                        w-full
-                        overflow-x-auto
-                        rounded-2xl
-                        border
-                        border-slate-200
-
-                        dark:border-slate-700
-                      "
-                    >
-                      <table
-                        className="
-                          min-w-full
-                          border-collapse
-                          text-left
-                          text-sm
-                        "
-                      >
+                      <table className="w-full min-w-max">
                         {children}
                       </table>
                     </div>
                   );
                 },
 
-                thead({ children }) {
+                img({
+                  src,
+                  alt,
+                  ...props
+                }) {
                   return (
-                    <thead
+                    <img
+                      src={src}
+                      alt={alt || ""}
                       className="
-                        bg-slate-100
-
-                        dark:bg-slate-800
+                        max-w-full
+                        h-auto
+                        rounded-xl
                       "
-                    >
-                      {children}
-                    </thead>
+                      {...props}
+                    />
                   );
                 },
 
-                th({ children }) {
+                a({
+                  children,
+                  href,
+                  ...props
+                }) {
                   return (
-                    <th
+                    <a
+                      href={href}
                       className="
-                        border-b
-                        border-slate-200
-                        px-4
-                        py-3
-                        font-bold
-                        text-slate-800
-
-                        dark:border-slate-700
-                        dark:text-white
+                        break-words
                       "
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...props}
                     >
                       {children}
-                    </th>
-                  );
-                },
-
-                td({ children }) {
-                  return (
-                    <td
-                      className="
-                        border-b
-                        border-slate-200
-                        px-4
-                        py-3
-                        align-top
-                        text-slate-700
-
-                        dark:border-slate-700
-                        dark:text-slate-300
-                      "
-                    >
-                      {children}
-                    </td>
-                  );
-                },
-
-                /* ==================================
-                   Delete Table Body Border
-                ================================== */
-
-                tbody({ children }) {
-                  return (
-                    <tbody
-                      className="
-                        divide-y
-                        divide-slate-200
-
-                        dark:divide-slate-700
-                      "
-                    >
-                      {children}
-                    </tbody>
+                    </a>
                   );
                 },
               }}
@@ -794,6 +374,15 @@ function MessageBubble({ message }) {
 ========================================== */
 
 function ThinkingIndicator() {
+  const blobDelays = [
+    "0.2s",
+    "0.4s",
+    "0.6s",
+    "0.8s",
+    "1s",
+    "1.2s",
+  ];
+
   return (
     <motion.div
       initial={{
@@ -809,61 +398,317 @@ function ThinkingIndicator() {
       }}
       className="
         flex
-        justify-start
+        justify-center
+        py-10
       "
     >
-      <div
-        className="
-          flex
-          items-center
-          gap-2
-          rounded-2xl
-          border
-          border-slate-200
-          bg-white
-          px-5
-          py-4
-          shadow-sm
+      {/* ======================================
+          Goo Filter
+      ====================================== */}
 
-          dark:border-slate-700
-          dark:bg-[#1b2029]
-        "
+      <svg
+        width="0"
+        height="0"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+        }}
       >
-        {[0, 1, 2].map(
-          (dot) => (
-            <motion.div
-              key={dot}
-              animate={{
-                y: [
-                  0,
-                  -6,
-                  0,
-                ],
-                opacity: [
-                  0.35,
-                  1,
-                  0.35,
-                ],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 0.8,
-                delay:
-                  dot * 0.18,
-                ease: "easeInOut",
-              }}
-              className="
-                h-2.5
-                w-2.5
-                rounded-full
-                bg-blue-600
+        <defs>
+          <filter id="thinking-goo">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="10"
+              result="blur"
+            />
 
-                dark:bg-blue-400
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 18 -7
               "
+              result="goo"
+            />
+
+            <feBlend
+              in="SourceGraphic"
+              in2="goo"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* ======================================
+          Blob Animation
+      ====================================== */}
+
+      <div className="thinking-blobs">
+        <div className="blob-center" />
+
+        {blobDelays.map(
+          (delay, index) => (
+            <div
+              key={index}
+              className="thinking-blob"
+              style={{
+                animationDelay: delay,
+              }}
             />
           )
         )}
       </div>
+
+      {/* ======================================
+          Animation Styles
+      ====================================== */}
+
+      <style>{`
+        .thinking-blobs {
+          width: 300px;
+          height: 300px;
+          position: relative;
+          overflow: hidden;
+          border-radius: 70px;
+          transform-style: preserve-3d;
+          filter: url(#thinking-goo);
+        }
+
+        .thinking-blobs .blob-center {
+          transform-style: preserve-3d;
+          position: absolute;
+          background: #034282;
+          top: 50%;
+          left: 50%;
+          width: 30px;
+          height: 30px;
+          transform-origin: left top;
+          transform: scale(0.9)
+            translate(-50%, -50%);
+          animation: blob-grow-2 3.4s linear infinite;
+          border-radius: 50%;
+          box-shadow:
+            0 -10px 40px -5px #1d1d1d;
+        }
+
+        .thinking-blobs .thinking-blob {
+          position: absolute;
+          background: #052f6a;
+          top: 50%;
+          left: 50%;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          animation: blobs-2 3.4s ease-out infinite;
+          transform: scale(0.9)
+            translate(-50%, -50%);
+          transform-origin: center top;
+          opacity: 0;
+        }
+
+        @keyframes blobs-2 {
+          0% {
+            opacity: 0;
+            transform:
+              scale(0)
+              translate(
+                calc(-330px - 50%),
+                -50%
+              );
+          }
+
+          1% {
+            opacity: 1;
+          }
+
+          35%,
+          65% {
+            opacity: 1;
+            transform:
+              scale(0.9)
+              translate(-50%, -50%);
+          }
+
+          99% {
+            opacity: 1;
+          }
+
+          100% {
+            opacity: 0;
+            transform:
+              scale(0)
+              translate(
+                calc(330px - 50%),
+                -50%
+              );
+          }
+        }
+
+        @keyframes blob-grow-2 {
+          0%,
+          39% {
+            transform:
+              scale(0)
+              translate(-50%, -50%);
+          }
+
+          40%,
+          42% {
+            transform:
+              scale(1, 0.9)
+              translate(-50%, -50%);
+          }
+
+          43%,
+          44% {
+            transform:
+              scale(1.2, 1.1)
+              translate(-50%, -50%);
+          }
+
+          45%,
+          46% {
+            transform:
+              scale(1.3, 1.2)
+              translate(-50%, -50%);
+          }
+
+          47%,
+          48% {
+            transform:
+              scale(1.4, 1.3)
+              translate(-50%, -50%);
+          }
+
+          52% {
+            transform:
+              scale(1.5, 1.4)
+              translate(-50%, -50%);
+          }
+
+          54% {
+            transform:
+              scale(1.7, 1.6)
+              translate(-50%, -50%);
+          }
+
+          58% {
+            transform:
+              scale(1.8, 1.7)
+              translate(-50%, -50%);
+          }
+
+          68%,
+          70% {
+            transform:
+              scale(1.7, 1.5)
+              translate(-50%, -50%);
+          }
+
+          78% {
+            transform:
+              scale(1.6, 1.4)
+              translate(-50%, -50%);
+          }
+
+          80%,
+          81% {
+            transform:
+              scale(1.5, 1.4)
+              translate(-50%, -50%);
+          }
+
+          82%,
+          83% {
+            transform:
+              scale(1.4, 1.3)
+              translate(-50%, -50%);
+          }
+
+          84%,
+          85% {
+            transform:
+              scale(1.3, 1.2)
+              translate(-50%, -50%);
+          }
+
+          86%,
+          87% {
+            transform:
+              scale(1.2, 1.1)
+              translate(-50%, -50%);
+          }
+
+          90%,
+          91% {
+            transform:
+              scale(1, 0.9)
+              translate(-50%, -50%);
+          }
+
+          92%,
+          100% {
+            transform:
+              scale(0)
+              translate(-50%, -50%);
+          }
+        }
+
+        /* ======================================
+           Mobile + Tablet Output Protection
+        ====================================== */
+
+        @media (max-width: 1023px) {
+          .ai-output-content {
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: normal;
+          }
+
+          .ai-output-content p,
+          .ai-output-content h1,
+          .ai-output-content h2,
+          .ai-output-content h3,
+          .ai-output-content h4,
+          .ai-output-content h5,
+          .ai-output-content h6,
+          .ai-output-content li {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+          }
+
+          .ai-output-content pre {
+            max-width: 100%;
+            overflow-x: auto;
+          }
+
+          .ai-output-content table {
+            max-width: 100%;
+          }
+
+          .ai-output-content img,
+          .ai-output-content video {
+            max-width: 100%;
+            height: auto;
+          }
+        }
+
+        /* ======================================
+           Small Phones
+        ====================================== */
+
+        @media (max-width: 639px) {
+          .thinking-blobs {
+            width: 240px;
+            height: 240px;
+            border-radius: 55px;
+          }
+        }
+      `}</style>
     </motion.div>
   );
 }
@@ -901,7 +746,6 @@ function WelcomeScreen() {
           text-4xl
           font-bold
           text-slate-800
-
           sm:text-5xl
 
           dark:text-white
@@ -915,7 +759,6 @@ function WelcomeScreen() {
           mt-5
           max-w-2xl
           text-lg
-          leading-8
           text-slate-500
 
           dark:text-slate-400
@@ -958,6 +801,7 @@ function WelcomeScreen() {
                 text-left
                 shadow-sm
                 transition
+
                 hover:shadow-lg
 
                 dark:border-slate-700
@@ -979,7 +823,6 @@ function WelcomeScreen() {
                 className="
                   mt-2
                   text-sm
-                  leading-6
                   text-slate-500
 
                   dark:text-slate-400
@@ -1021,6 +864,8 @@ function OutputArea({
       className="
         relative
         w-full
+        min-w-0
+        max-w-full
         text-slate-900
 
         dark:text-slate-100
@@ -1058,13 +903,18 @@ function OutputArea({
             className="
               mx-auto
               flex
+              min-w-0
               max-w-5xl
               flex-col
               gap-8
               px-2
-              pt-14
-              sm:pt-16
+              pt-8
+              sm:pt-10
               pb-36
+
+              max-[1023px]:w-full
+              max-[1023px]:max-w-full
+              max-[1023px]:overflow-hidden
             "
           >
             {blog?.messages?.map(
@@ -1074,9 +924,7 @@ function OutputArea({
                     message._id ||
                     message.id
                   }
-                  message={
-                    message
-                  }
+                  message={message}
                 />
               )
             )}
@@ -1113,11 +961,16 @@ function OutputArea({
               className="
                 mx-auto
                 flex
+                min-w-0
                 max-w-5xl
                 flex-col
                 px-2
-                pt-14
-                sm:pt-16
+                pt-8
+                sm:pt-10
+
+                max-[1023px]:w-full
+                max-[1023px]:max-w-full
+                max-[1023px]:overflow-hidden
               "
             >
               {/* ==================================
@@ -1136,13 +989,15 @@ function OutputArea({
               >
                 <h1
                   className="
+                    max-w-full
+                    break-words
                     text-3xl
                     font-bold
                     text-slate-800
 
-                    sm:text-4xl
-
                     dark:text-white
+
+                    max-[1023px]:text-2xl
                   "
                 >
                   {blog.title}
@@ -1169,8 +1024,13 @@ function OutputArea({
 
               <div
                 className="
+                  min-w-0
+                  max-w-full
                   space-y-2
                   pb-36
+
+                  max-[1023px]:w-full
+                  max-[1023px]:overflow-hidden
                 "
               >
                 {blog.messages?.map(
