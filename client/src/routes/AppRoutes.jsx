@@ -61,6 +61,7 @@ function AppRoutes() {
         element={<NotFound />}
       />
     </Routes>
+    
   );
 }
 

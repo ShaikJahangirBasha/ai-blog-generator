@@ -1,99 +1,59 @@
 @import "tailwindcss";
 
 /* ==========================================
-   Tailwind Dark Mode
+   Tailwind v4 Dark Mode Variant
 ========================================== */
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==========================================
-   Reset
+   Custom 3D Utilities for Tailwind v4
 ========================================== */
-
-* {
-  margin: 1;
-  padding: 1;
-  box-sizing: border-box;
+@utility perspective-1000 {
+  perspective: 1000px;
 }
 
 /* ==========================================
-   Root
+   Root & Body Layout Fixes
 ========================================== */
-
 html,
 body,
 #root {
   width: 100%;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
-
-html {
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-}
-
-/* ==========================================
-   Body
-========================================== */
 
 body {
-  font-family: Inter, sans-serif;
-  background: #f8fafc;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
   color: #111827;
-
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
 }
 
 /* ==========================================
-   Light Theme
+   Theme Colors (Light & Dark)
 ========================================== */
-
 html.light,
 html.light body {
-  background: #f8fafc;
+  background-color: #f8fafc;
   color: #111827;
 }
-
-/* ==========================================
-   Dark Theme
-========================================== */
 
 html.dark,
 html.dark body {
-  background: #020617;
+  background-color: #020617;
   color: #f8fafc;
 }
 
-/* ==========================================
-   Smooth Theme Transitions
-========================================== */
-
+/* Smooth background theme transition applied only to main container elements */
 html,
-body,
-button,
-input,
-textarea,
-select,
-main,
-section,
-aside,
-nav,
-header,
-footer,
-div {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.25s ease;
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ==========================================
-   Scrollbar
+   Custom Scrollbar
 ========================================== */
-
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -112,10 +72,7 @@ div {
   background: #94a3b8;
 }
 
-/* ==========================================
-   Dark Scrollbar
-========================================== */
-
+/* Dark Mode Scrollbar */
 html.dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
