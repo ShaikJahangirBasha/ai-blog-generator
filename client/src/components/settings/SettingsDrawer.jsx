@@ -1,6 +1,6 @@
-import { useEffect } from "react";
 import {
   X,
+  Globe,
   Sun,
   Monitor,
   Moon,
@@ -8,7 +8,11 @@ import {
   Info,
   Trash2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+
+import {
+  motion,
+  AnimatePresence,
+} from "framer-motion";
 
 import { useSettings } from "../../context/SettingsContext";
 import useAuth from "../../hooks/useAuth";
@@ -16,48 +20,28 @@ import useLanguage from "../../hooks/useLanguage";
 import { useBlogs } from "../../context/BlogContext";
 
 function SettingsDrawer() {
-  const { drawerOpen, setDrawerOpen, theme, setTheme } = useSettings();
+  const {
+    drawerOpen,
+    setDrawerOpen,
+    theme,
+    setTheme,
+    language,
+    setLanguage,
+  } = useSettings();
+
   const { logout } = useAuth();
-  const { blogs } = useBlogs();
+
+  const {
+    blogs,
+    clearAllBlogs,
+  } = useBlogs();
+
   const t = useLanguage();
-
-  /* ==========================================
-     Prevent Body Scroll When Drawer Is Open
-  ========================================== */
-  useEffect(() => {
-    if (drawerOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [drawerOpen]);
-
-  /* ==========================================
-     Close Drawer on Escape Key
-  ========================================== */
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setDrawerOpen(false);
-      }
-    };
-
-    if (drawerOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [drawerOpen, setDrawerOpen]);
 
   /* ==========================================
      Logout
   ========================================== */
+
   const handleLogout = async () => {
     await logout();
     setDrawerOpen(false);
@@ -66,13 +50,36 @@ function SettingsDrawer() {
   /* ==========================================
      Clear History
   ========================================== */
-  const handleClearHistory = () => {
-    const confirmed = window.confirm(t.settings.clearConfirmation);
 
-    if (!confirmed) return;
+  const handleClearHistory = async () => {
+    const confirmed =
+      window.confirm(
+        t.settings.clearConfirmation
+      );
 
-    localStorage.removeItem("blogs");
-    window.location.reload();
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await clearAllBlogs();
+
+      /*
+       * Close the settings drawer
+       * after successful deletion.
+       */
+      setDrawerOpen(false);
+    } catch (error) {
+      console.error(
+        "Clear History Error:",
+        error
+      );
+
+      alert(
+        error.message ||
+          "Failed to clear history."
+      );
+    }
   };
 
   return (
@@ -82,6 +89,7 @@ function SettingsDrawer() {
           {/* ==========================================
               Overlay
           ========================================== */}
+
           <motion.div
             className="
               fixed
@@ -90,230 +98,506 @@ function SettingsDrawer() {
               bg-black/40
               backdrop-blur-[2px]
             "
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setDrawerOpen(false)}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            onClick={() =>
+              setDrawerOpen(false)
+            }
           />
 
           {/* ==========================================
-              Drawer Container
+              Drawer
           ========================================== */}
-          <motion.div
+
+          <motion.aside
+            initial={{
+              x: "100%",
+            }}
+            animate={{
+              x: 0,
+            }}
+            exit={{
+              x: "100%",
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
             className="
               fixed
-              inset-y-0
               right-0
+              top-0
               z-50
               flex
-              h-dvh
+              h-full
               w-full
               max-w-md
               flex-col
+              overflow-y-auto
               border-l
-              border-slate-200
-              bg-white
-              text-slate-800
+              border-slate-700
+              bg-[#151A23]
+              text-white
               shadow-2xl
-              transition-colors
-              duration-300
-              dark:border-slate-800
-              dark:bg-slate-950
-              dark:text-slate-100
+
+              max-[639px]:max-w-full
             "
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {/* ==========================================
                 Header
             ========================================== */}
+
             <div
               className="
                 flex
                 items-center
                 justify-between
                 border-b
-                border-slate-200
-                px-4
-                py-4
-                dark:border-slate-800
-                sm:px-6
-                sm:py-5
+                border-slate-700
+                px-6
+                py-5
               "
             >
               <div>
-                <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+                <h2
+                  className="
+                    text-xl
+                    font-bold
+                    text-white
+                  "
+                >
                   {t.settings.title}
                 </h2>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  Customize your Blog Studio
+
+                <p
+                  className="
+                    mt-1
+                    text-sm
+                    text-slate-400
+                  "
+                >
+                  {t.settings.subtitle}
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Close settings"
+                onClick={() =>
+                  setDrawerOpen(false)
+                }
                 className="
-                  rounded-xl
-                  p-2
-                  text-slate-500
+                  flex
+                  h-9
+                  w-9
+                  items-center
+                  justify-center
+                  rounded-lg
+                  text-slate-400
                   transition
-                  hover:bg-slate-100
-                  hover:text-slate-800
-                  dark:text-slate-400
-                  dark:hover:bg-slate-800
-                  dark:hover:text-white
+                  hover:bg-slate-800
+                  hover:text-white
                 "
+                aria-label="Close settings"
               >
-                <X size={22} />
+                <X size={20} />
               </button>
             </div>
 
             {/* ==========================================
                 Content
             ========================================== */}
-            <div className="flex-1 space-y-8 overflow-y-auto p-4 sm:p-6">
-              {/* Appearance */}
-              <div>
-                <h3 className="mb-3 font-semibold text-slate-800 dark:text-slate-100">
-                  {t.settings.appearance}
-                </h3>
 
-                <div className="space-y-2">
-                  {/* Light */}
+            <div
+              className="
+                flex-1
+                space-y-8
+                px-6
+                py-6
+              "
+            >
+              {/* ========================================
+                  Appearance
+              ======================================== */}
+
+              <section>
+                <div
+                  className="
+                    mb-4
+                    flex
+                    items-center
+                    gap-3
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      bg-blue-600/15
+                      text-blue-400
+                    "
+                  >
+                    {theme === "dark" ? (
+                      <Moon size={18} />
+                    ) : theme ===
+                      "light" ? (
+                      <Sun size={18} />
+                    ) : (
+                      <Monitor size={18} />
+                    )}
+                  </div>
+
+                  <div>
+                    <h3
+                      className="
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {t.settings.appearance}
+                    </h3>
+
+                    <p
+                      className="
+                        text-xs
+                        text-slate-500
+                      "
+                    >
+                      {t.settings.appearanceDescription}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-3
+                    gap-3
+                  "
+                >
                   <button
                     type="button"
-                    onClick={() => setTheme("light")}
+                    onClick={() =>
+                      setTheme("light")
+                    }
                     className={`
                       flex
-                      w-full
+                      flex-col
                       items-center
-                      gap-3
+                      gap-2
                       rounded-xl
                       border
-                      p-3
-                      text-left
+                      px-3
+                      py-4
+                      text-sm
                       transition
+
                       ${
                         theme === "light"
-                          ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
-                          : "border-transparent text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900"
+                          ? "border-blue-500 bg-blue-600/10 text-blue-400"
+                          : "border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600"
                       }
                     `}
                   >
                     <Sun size={18} />
-                    <div>
-                      <p className="font-medium">Light</p>
-                      <p className="text-xs opacity-70">Bright appearance</p>
-                    </div>
+                    <span>
+                      {t.settings.light}
+                    </span>
                   </button>
 
-                  {/* Dark */}
                   <button
                     type="button"
-                    onClick={() => setTheme("dark")}
+                    onClick={() =>
+                      setTheme("system")
+                    }
                     className={`
                       flex
-                      w-full
+                      flex-col
                       items-center
-                      gap-3
+                      gap-2
                       rounded-xl
                       border
-                      p-3
-                      text-left
+                      px-3
+                      py-4
+                      text-sm
                       transition
-                      ${
-                        theme === "dark"
-                          ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
-                          : "border-transparent text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900"
-                      }
-                    `}
-                  >
-                    <Moon size={18} />
-                    <div>
-                      <p className="font-medium">Dark</p>
-                      <p className="text-xs opacity-70">Dark appearance</p>
-                    </div>
-                  </button>
 
-                  {/* System */}
-                  <button
-                    type="button"
-                    onClick={() => setTheme("system")}
-                    className={`
-                      flex
-                      w-full
-                      items-center
-                      gap-3
-                      rounded-xl
-                      border
-                      p-3
-                      text-left
-                      transition
                       ${
                         theme === "system"
-                          ? "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400"
-                          : "border-transparent text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-900"
+                          ? "border-blue-500 bg-blue-600/10 text-blue-400"
+                          : "border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600"
                       }
                     `}
                   >
                     <Monitor size={18} />
-                    <div>
-                      <p className="font-medium">System</p>
-                      <p className="text-xs opacity-70">Follow device theme</p>
-                    </div>
+                    <span>
+                      {t.settings.system}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setTheme("dark")
+                    }
+                    className={`
+                      flex
+                      flex-col
+                      items-center
+                      gap-2
+                      rounded-xl
+                      border
+                      px-3
+                      py-4
+                      text-sm
+                      transition
+
+                      ${
+                        theme === "dark"
+                          ? "border-blue-500 bg-blue-600/10 text-blue-400"
+                          : "border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-600"
+                      }
+                    `}
+                  >
+                    <Moon size={18} />
+                    <span>
+                      {t.settings.dark}
+                    </span>
                   </button>
                 </div>
-              </div>
+              </section>
 
-              {/* About */}
-              <div>
-                <div className="mb-3 flex items-center gap-2">
-                  <Info size={18} className="text-slate-600 dark:text-slate-300" />
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100">
-                    {t.settings.about}
-                  </h3>
+              {/* ========================================
+                  Language
+              ======================================== */}
+{/* 
+              <section>
+                <div
+                  className="
+                    mb-4
+                    flex
+                    items-center
+                    gap-3
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      bg-blue-600/15
+                      text-blue-400
+                    "
+                  >
+                    <Globe size={18} />
+                  </div>
+
+                  <div>
+                    <h3
+                      className="
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {t.settings.language}
+                    </h3>
+
+                    <p
+                      className="
+                        text-xs
+                        text-slate-500
+                      "
+                    >
+                      {t.settings.languageDescription}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    Blog Studio v1.0.0
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    {blogs?.length || 0} Blogs Generated
-                  </p>
-                </div>
-              </div>
+                <select
+                  value={language}
+                  onChange={(event) =>
+                    setLanguage(
+                      event.target.value
+                    )
+                  }
+                  className="
+                    w-full
+                    rounded-xl
+                    border
+                    border-slate-700
+                    bg-slate-900
+                    px-4
+                    py-3
+                    text-sm
+                    text-white
+                    outline-none
+                    transition
+                    focus:border-blue-500
+                  "
+                >
+                  <option value="English">
+                    English
+                  </option>
 
-              {/* Clear History */}
-              <button
-                type="button"
-                onClick={handleClearHistory}
+                  <option value="Telugu">
+                    Telugu
+                  </option>
+
+                  <option value="Hindi">
+                    Hindi
+                  </option>
+                </select>
+              </section> */}
+
+              {/* ========================================
+                  Clear History
+              ======================================== */}
+
+              <section>
+                <div
+                  className="
+                    mb-4
+                    flex
+                    items-center
+                    gap-3
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      bg-orange-500/15
+                      text-orange-400
+                    "
+                  >
+                    <Trash2 size={18} />
+                  </div>
+
+                  <div>
+                    <h3
+                      className="
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {t.settings.clearHistory}
+                    </h3>
+
+                    <p
+                      className="
+                        text-xs
+                        text-slate-500
+                      "
+                    >
+                      {blogs.length}{" "}
+                      conversations
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={
+                    handleClearHistory
+                  }
+                  className="
+                    flex
+                    w-full
+                    items-center
+                    justify-center
+                    gap-3
+                    rounded-xl
+                    bg-orange-500
+                    py-3
+                    font-semibold
+                    text-white
+                    transition
+                    hover:bg-orange-600
+                    hover:shadow-lg
+                    hover:shadow-orange-500/20
+                  "
+                >
+                  <Trash2 size={18} />
+
+                  {t.settings.clearHistory}
+                </button>
+              </section>
+
+              {/* ========================================
+                  Information
+              ======================================== */}
+
+              <section
                 className="
-                  flex
-                  w-full
-                  items-center
-                  justify-center
-                  gap-3
                   rounded-xl
-                  bg-orange-500
-                  py-3
-                  font-semibold
-                  text-white
-                  transition
-                  hover:bg-orange-600
-                  hover:shadow-lg
-                  hover:shadow-orange-500/20
+                  border
+                  border-slate-700
+                  bg-slate-900/50
+                  p-4
                 "
               >
-                <Trash2 size={18} />
-                {t.settings.clearHistory}
-              </button>
+                <div
+                  className="
+                    flex
+                    gap-3
+                  "
+                >
+                  <Info
+                    size={18}
+                    className="
+                      mt-0.5
+                      flex-shrink-0
+                      text-blue-400
+                    "
+                  />
 
-              {/* Logout */}
+                  <div>
+                    <h3
+                      className="
+                        text-sm
+                        font-semibold
+                        text-white
+                      "
+                    >
+                      {t.settings.about}
+                    </h3>
+
+                    <p
+                      className="
+                        mt-1
+                        text-xs
+                        leading-5
+                        text-slate-500
+                      "
+                    >
+                      {t.settings.aboutDescription}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* ========================================
+                  Logout
+              ======================================== */}
+
               <button
                 type="button"
                 onClick={handleLogout}
@@ -324,21 +608,22 @@ function SettingsDrawer() {
                   justify-center
                   gap-3
                   rounded-xl
-                  bg-red-500
+                  border
+                  border-red-500/30
+                  bg-red-500/10
                   py-3
                   font-semibold
-                  text-white
+                  text-red-400
                   transition
-                  hover:bg-red-600
-                  hover:shadow-lg
-                  hover:shadow-red-500/20
+                  hover:bg-red-500/20
                 "
               >
                 <LogOut size={18} />
+
                 {t.settings.logout}
               </button>
             </div>
-          </motion.div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>

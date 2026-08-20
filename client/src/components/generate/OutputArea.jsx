@@ -11,6 +11,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import {
   Copy,
   Check,
+  Sparkles,
 } from "lucide-react";
 
 /* ==========================================
@@ -78,17 +79,18 @@ function MessageBubble({ message }) {
     <motion.div
       initial={{
         opacity: 0,
-        y: 15,
+        y: 12,
       }}
       animate={{
         opacity: 1,
         y: 0,
       }}
       transition={{
-        duration: 0.25,
+        duration: 0.3,
+        ease: "easeOut",
       }}
       className={`
-        mb-8
+        mb-10
         flex
         min-w-0
         max-w-full
@@ -104,112 +106,80 @@ function MessageBubble({ message }) {
           flex
           min-w-0
           max-w-full
-          ${
-            isAI
-              ? ""
-              : "flex-row-reverse"
-          }
+          gap-3
+
+          max-[1023px]:w-full
         `}
       >
+
         {/* ======================================
-            Message Bubble
+            AI Identity
+        ====================================== */}
+
+        {isAI && (
+          <div
+            className="
+              mt-1
+              flex
+              h-8
+              w-8
+              flex-shrink-0
+              items-center
+              justify-center
+              rounded-full
+              bg-blue-600
+              shadow-sm
+            "
+          >
+            <Sparkles
+              size={16}
+              className="text-white"
+            />
+          </div>
+        )}
+
+        {/* ======================================
+            Content Area
         ====================================== */}
 
         <div
           className={`
             min-w-0
             max-w-full
-            rounded-3xl
-            px-6
-            py-5
-            shadow-lg
 
             ${
               isAI
                 ? `
-                  border
-                  border-slate-200
-                  bg-white
-                  text-slate-800
-
-                  dark:border-slate-700
-                  dark:bg-[#1b2029]
-                  dark:text-slate-100
+                  flex-1
+                  max-w-4xl
                 `
                 : `
+                  max-w-[75%]
+                  rounded-2xl
                   bg-blue-600
+                  px-5
+                  py-3
                   text-white
+
+                  max-[1023px]:max-w-[85%]
+                  max-[639px]:max-w-[90%]
                 `
             }
-
-            max-[1023px]:w-full
-            max-[1023px]:rounded-2xl
-            max-[1023px]:px-4
-            max-[1023px]:py-4
           `}
         >
-          {/* ======================================
-              Copy Button
-          ====================================== */}
 
-          {isAI && (
-            <div
-              className="
-                mb-4
-                flex
-                items-center
-                justify-end
-              "
-            >
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  rounded-lg
-                  border
-                  border-slate-200
-                  px-3
-                  py-1.5
-                  text-xs
-                  text-slate-600
-                  transition
-                  hover:bg-slate-100
-
-                  dark:border-slate-700
-                  dark:text-slate-300
-                  dark:hover:bg-slate-800
-                "
-              >
-                {copied ? (
-                  <>
-                    <Check size={14} />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* ======================================
+          {/* ====================================
               User Label
-          ====================================== */}
+          ==================================== */}
 
           {!isAI && (
             <div
               className="
-                mb-3
-                text-xs
+                mb-1
+                text-[10px]
                 font-semibold
                 uppercase
-                tracking-wide
+                tracking-wider
                 text-blue-100
               "
             >
@@ -217,27 +187,84 @@ function MessageBubble({ message }) {
             </div>
           )}
 
-          {/* ======================================
+          {/* ====================================
+              AI Label
+          ==================================== */}
+{/* 
+          {isAI && (
+            <div
+              className="
+                mb-3
+                flex
+                items-center
+                gap-2
+              "
+            >
+              <span
+                className="
+                  text-sm
+                  font-semibold
+                  text-slate-800
+
+                  dark:text-white
+                "
+              >
+                AI
+              </span>
+
+              <span
+                className="
+                  rounded-full
+                  border
+                  border-slate-200
+                  px-2
+                  py-0.5
+                  text-[10px]
+                  font-medium
+                  text-slate-500
+
+                  dark:border-slate-700
+                  dark:text-slate-400
+                "
+              >
+                BlogGPT
+              </span>
+            </div>
+          )} */}
+
+          {/* ====================================
               Markdown Content
-          ====================================== */}
+          ==================================== */}
 
           <div
             className={`
               ai-output-content
               min-w-0
               max-w-full
-              prose
-              max-w-none
               break-words
               overflow-hidden
 
               ${
                 isAI
                   ? `
+                    prose
                     prose-slate
+                    max-w-none
+
+                    prose-headings:text-slate-900
+                    prose-p:text-slate-700
+                    prose-strong:text-slate-900
+
                     dark:prose-invert
+                    dark:prose-headings:text-white
+                    dark:prose-p:text-slate-300
+                    dark:prose-strong:text-white
                   `
-                  : "prose-invert"
+                  : `
+                    prose
+                    prose-invert
+                    max-w-none
+                  `
               }
             `}
           >
@@ -246,6 +273,167 @@ function MessageBubble({ message }) {
                 remarkGfm,
               ]}
               components={{
+                h1({
+                  children,
+                }) {
+                  return (
+                    <h1
+                      className="
+                        mb-6
+                        mt-2
+                        text-3xl
+                        font-bold
+                        leading-tight
+                        tracking-tight
+
+                        max-[1023px]:text-2xl
+                        max-[639px]:text-xl
+                      "
+                    >
+                      {children}
+                    </h1>
+                  );
+                },
+
+                h2({
+                  children,
+                }) {
+                  return (
+                    <h2
+                      className="
+                        mb-4
+                        mt-8
+                        border-b
+                        border-slate-200
+                        pb-2
+                        text-2xl
+                        font-bold
+                        leading-tight
+
+                        dark:border-slate-700
+
+                        max-[1023px]:text-xl
+                        max-[639px]:text-lg
+                      "
+                    >
+                      {children}
+                    </h2>
+                  );
+                },
+
+                h3({
+                  children,
+                }) {
+                  return (
+                    <h3
+                      className="
+                        mb-3
+                        mt-6
+                        text-xl
+                        font-semibold
+                        leading-tight
+
+                        max-[1023px]:text-lg
+                        max-[639px]:text-base
+                      "
+                    >
+                      {children}
+                    </h3>
+                  );
+                },
+
+                p({
+                  children,
+                }) {
+                  return (
+                    <p
+                      className="
+                        mb-5
+                        text-[15px]
+                        leading-7
+                        text-slate-700
+
+                        dark:text-slate-300
+
+                        max-[639px]:text-sm
+                        max-[639px]:leading-6
+                      "
+                    >
+                      {children}
+                    </p>
+                  );
+                },
+
+                ul({
+                  children,
+                }) {
+                  return (
+                    <ul
+                      className="
+                        my-5
+                        space-y-2
+                        pl-6
+                      "
+                    >
+                      {children}
+                    </ul>
+                  );
+                },
+
+                ol({
+                  children,
+                }) {
+                  return (
+                    <ol
+                      className="
+                        my-5
+                        space-y-2
+                        pl-6
+                      "
+                    >
+                      {children}
+                    </ol>
+                  );
+                },
+
+                li({
+                  children,
+                }) {
+                  return (
+                    <li
+                      className="
+                        leading-7
+                      "
+                    >
+                      {children}
+                    </li>
+                  );
+                },
+
+                blockquote({
+                  children,
+                }) {
+                  return (
+                    <blockquote
+                      className="
+                        my-6
+                        border-l-4
+                        border-blue-500
+                        bg-slate-50
+                        px-5
+                        py-3
+                        italic
+                        text-slate-600
+
+                        dark:bg-slate-800/50
+                        dark:text-slate-300
+                      "
+                    >
+                      {children}
+                    </blockquote>
+                  );
+                },
+
                 code({
                   inline,
                   className,
@@ -261,10 +449,14 @@ function MessageBubble({ message }) {
                     match ? (
                     <div
                       className="
-                        my-4
+                        my-6
                         max-w-full
                         overflow-x-auto
                         rounded-xl
+                        border
+                        border-slate-200
+
+                        dark:border-slate-700
                       "
                     >
                       <SyntaxHighlighter
@@ -276,9 +468,14 @@ function MessageBubble({ message }) {
                         customStyle={{
                           margin: 0,
                           maxWidth: "100%",
-                          overflowX: "auto",
+                          overflowX:
+                            "auto",
+                          borderRadius:
+                            "0.75rem",
                         }}
-                        wrapLongLines={false}
+                        wrapLongLines={
+                          false
+                        }
                       >
                         {String(
                           children
@@ -290,10 +487,19 @@ function MessageBubble({ message }) {
                     </div>
                   ) : (
                     <code
-                      className={`
-                        ${className || ""}
+                      className="
+                        rounded-md
+                        bg-slate-100
+                        px-1.5
+                        py-0.5
+                        text-sm
+                        text-blue-700
+
+                        dark:bg-slate-800
+                        dark:text-blue-300
+
                         break-words
-                      `}
+                      "
                       {...props}
                     >
                       {children}
@@ -307,13 +513,23 @@ function MessageBubble({ message }) {
                   return (
                     <div
                       className="
-                        my-5
+                        my-6
                         max-w-full
                         overflow-x-auto
                         rounded-xl
+                        border
+                        border-slate-200
+
+                        dark:border-slate-700
                       "
                     >
-                      <table className="w-full min-w-max">
+                      <table
+                        className="
+                          w-full
+                          min-w-max
+                          text-sm
+                        "
+                      >
                         {children}
                       </table>
                     </div>
@@ -330,6 +546,7 @@ function MessageBubble({ message }) {
                       src={src}
                       alt={alt || ""}
                       className="
+                        my-6
                         max-w-full
                         h-auto
                         rounded-xl
@@ -349,6 +566,12 @@ function MessageBubble({ message }) {
                       href={href}
                       className="
                         break-words
+                        font-medium
+                        text-blue-600
+                        underline
+                        decoration-blue-300
+                        underline-offset-2
+                        hover:decoration-blue-600
                       "
                       target="_blank"
                       rel="noopener noreferrer"
@@ -363,12 +586,69 @@ function MessageBubble({ message }) {
               {message.content}
             </ReactMarkdown>
           </div>
+
+          {/* ====================================
+              AI Actions
+          ==================================== */}
+
+          {isAI && (
+            <div
+              className="
+                mt-5
+                flex
+                items-center
+                gap-2
+                border-t
+                border-slate-200
+                pt-3
+
+                dark:border-slate-700
+              "
+            >
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="
+                  flex
+                  items-center
+                  gap-1.5
+                  rounded-lg
+                  px-2.5
+                  py-1.5
+                  text-xs
+                  text-slate-500
+                  transition
+                  hover:bg-slate-100
+                  hover:text-slate-800
+
+                  dark:text-slate-400
+                  dark:hover:bg-slate-800
+                  dark:hover:text-white
+                "
+              >
+                {copied ? (
+                  <>
+                    <Check
+                      size={14}
+                    />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy
+                      size={14}
+                    />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
   );
 }
-
 /* ==========================================
    Thinking Indicator
 ========================================== */
@@ -720,119 +1000,226 @@ function ThinkingIndicator() {
 function WelcomeScreen() {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.35,
-      }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       className="
+        relative
         flex
         min-h-[75vh]
-        flex-col
+        w-full
         items-center
         justify-center
-        px-4
+        px-6
         text-center
       "
     >
-      <h1
-        className="
-          text-4xl
-          font-bold
-          text-slate-800
-          sm:text-5xl
+      {/* ==================================
+          Greeting — Appears First
+      ================================== */}
 
-          dark:text-white
+      <motion.div
+        initial={{
+          opacity: 0,
+          x: -70,
+        }}
+        animate={{
+          opacity: 1,
+          x: 0,
+        }}
+        transition={{
+          duration: 0.8,
+          delay: 0.15,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="
+          absolute
+          left-8
+          top-10
+          text-left
+
+          sm:left-12
+          sm:top-12
+
+          lg:left-16
+          lg:top-14
+
+          max-[639px]:left-5
+          max-[639px]:top-7
         "
       >
-        AI Blog Generator
-      </h1>
+        <div
+          className="
+            font-serif
+            text-3xl
+            font-normal
+            leading-tight
+            tracking-tight
+            text-slate-700
 
-      <p
-        className="
-          mt-5
-          max-w-2xl
-          text-lg
-          text-slate-500
+            dark:text-slate-200
 
-          dark:text-slate-400
-        "
-      >
-        Generate professional
-        blogs, articles,
-        tutorials and
-        AI-powered content
-        with a ChatGPT-like
-        experience.
-      </p>
+            sm:text-4xl
+            lg:text-5xl
+
+            max-[639px]:text-2xl
+          "
+        >
+          <div>
+            Good morning,
+          </div>
+
+          <div
+            className="
+              mt-1
+              font-semibold
+            "
+          >
+            Jahangir 👋
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ==================================
+          Center Content
+      ================================== */}
 
       <div
         className="
-          mt-12
-          grid
-          w-full
-          max-w-3xl
-          gap-4
-          md:grid-cols-2
+          flex
+          flex-col
+          items-center
+          justify-center
+          pt-4
+
+          max-[639px]:pt-16
         "
       >
-        {suggestions.map(
-          (item) => (
-            <motion.div
-              key={item.title}
-              whileHover={{
-                y: -4,
-              }}
-              transition={{
-                duration: 0.2,
-              }}
-              className="
-                rounded-2xl
-                border
-                border-slate-200
-                bg-white
-                p-5
-                text-left
-                shadow-sm
-                transition
+        {/* ==================================
+            Title — Drops From Top + Bounces
+        ================================== */}
 
-                hover:shadow-lg
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: -500,
+            scale: 0.9,
+          }}
+          animate={{
+            opacity: 1,
+            y: [
+              -500,
+              40,
+              -18,
+              8,
+              -4,
+              0,
+            ],
+            scale: [
+              0.9,
+              1.03,
+              0.99,
+              1.01,
+              1,
+              1,
+            ],
+          }}
+          transition={{
+            duration: 1.35,
+            delay: 0.85,
+            ease: "easeOut",
+            times: [
+              0,
+              0.62,
+              0.74,
+              0.84,
+              0.92,
+              1,
+            ],
+          }}
+          className="
+            font-serif
+            text-5xl
+            font-bold
+            leading-tight
+            tracking-tight
+            text-slate-800
 
-                dark:border-slate-700
-                dark:bg-[#1b2029]
-              "
-            >
-              <h3
-                className="
-                  font-semibold
-                  text-slate-800
+            dark:text-white
 
-                  dark:text-white
-                "
-              >
-                {item.title}
-              </h3>
+            sm:text-6xl
+            lg:text-7xl
 
-              <p
-                className="
-                  mt-2
-                  text-sm
-                  text-slate-500
+            max-[639px]:text-4xl
+          "
+        >
+          AI Blog Generator
+        </motion.h1>
 
-                  dark:text-slate-400
-                "
-              >
-                {item.prompt}
-              </p>
-            </motion.div>
-          )
-        )}
+        {/* ==================================
+            Ready To Create — Appears Last
+        ================================== */}
+
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 15,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.6,
+            delay: 2.15,
+            ease: "easeOut",
+          }}
+          className="
+            mt-5
+            flex
+            items-center
+            gap-2
+            font-serif
+            text-sm
+            italic
+            text-slate-500
+
+            dark:text-slate-400
+
+            sm:text-base
+          "
+        >
+          <motion.span
+            initial={{
+              opacity: 0,
+              scale: 0,
+              rotate: -45,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              rotate: 0,
+            }}
+            transition={{
+              duration: 0.5,
+              delay: 2.25,
+              type: "spring",
+              stiffness: 220,
+              damping: 12,
+            }}
+            className="
+              inline-flex
+              text-sm
+
+              sm:text-base
+            "
+          >
+            ✦
+          </motion.span>
+
+          <span>
+            Ready to create
+          </span>
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -884,54 +1271,62 @@ function OutputArea({
         {/* ======================================
             Thinking
         ====================================== */}
+{status === "thinking" && (
+  <motion.div
+    key="thinking"
+    initial={{
+      opacity: 0,
+    }}
+    animate={{
+      opacity: 1,
+    }}
+    exit={{
+      opacity: 0,
+    }}
+    transition={{
+      duration: 0.2,
+    }}
+    className="
+      mx-auto
+      flex
+      min-w-0
+      max-w-5xl
+      flex-col
+      gap-8
+      px-2
+      pt-8
+      sm:pt-10
+      pb-36
 
-        {status === "thinking" && (
-          <motion.div
-            key="thinking"
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
-            transition={{
-              duration: 0.2,
-            }}
-            className="
-              mx-auto
-              flex
-              min-w-0
-              max-w-5xl
-              flex-col
-              gap-8
-              px-2
-              pt-8
-              sm:pt-10
-              pb-36
+      max-[1023px]:w-full
+      max-[1023px]:max-w-full
+      max-[1023px]:overflow-hidden
+    "
+  >
+    {/* ==================================
+        User Prompt
+    ================================== */}
 
-              max-[1023px]:w-full
-              max-[1023px]:max-w-full
-              max-[1023px]:overflow-hidden
-            "
-          >
-            {blog?.messages?.map(
-              (message) => (
-                <MessageBubble
-                  key={
-                    message._id ||
-                    message.id
-                  }
-                  message={message}
-                />
-              )
-            )}
+   {blog?.messages?.map(
+  (message) => (
+    <MessageBubble
+      key={
+        message._id ||
+        message.id
+      }
+      message={message}
+    />
+  )
+)}
+<ThinkingIndicator />
 
-            <ThinkingIndicator />
-          </motion.div>
-        )}
+    {/* ==================================
+        AI Thinking
+    ================================== */}
+
+    <ThinkingIndicator />
+  </motion.div>
+)}
 
         {/* ======================================
             Completed Conversation
@@ -976,7 +1371,7 @@ function OutputArea({
               {/* ==================================
                   Blog Header
               ================================== */}
-
+{/* 
               <div
                 className="
                   mb-8
@@ -1016,7 +1411,7 @@ function OutputArea({
                     ?.length || 0}{" "}
                   messages
                 </p>
-              </div>
+              </div> */}
 
               {/* ==================================
                   Messages
@@ -1026,7 +1421,7 @@ function OutputArea({
                 className="
                   min-w-0
                   max-w-full
-                  space-y-2
+                  space-y-1
                   pb-36
 
                   max-[1023px]:w-full

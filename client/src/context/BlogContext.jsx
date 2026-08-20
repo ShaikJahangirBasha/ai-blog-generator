@@ -12,6 +12,7 @@ import {
   getConversation,
   renameConversation,
   deleteConversation,
+   clearHistory,
 } from "../services/api";
 
 const BlogContext = createContext();
@@ -271,6 +272,42 @@ export function BlogProvider({
       );
     }
   };
+  /* ===========================================
+   Clear All Conversations
+=========================================== */
+
+const clearAllBlogs = async () => {
+  try {
+    const response =
+      await clearHistory();
+
+    if (!response.success) {
+      throw new Error(
+        response.message ||
+          "Failed to clear history."
+      );
+    }
+
+    /*
+     * Immediately clear the React state.
+     */
+    setBlogs([]);
+
+    /*
+     * Return the workspace to
+     * New Chat mode.
+     */
+    setActiveBlogId(null);
+
+  } catch (error) {
+    console.error(
+      "Clear History Error:",
+      error
+    );
+
+    throw error;
+  }
+};
 
   /* ===========================================
      Active Conversation
@@ -314,6 +351,7 @@ export function BlogProvider({
 
         renameBlog,
         deleteBlog,
+        clearAllBlogs,
 
         /* Utilities */
 

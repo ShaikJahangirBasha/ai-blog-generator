@@ -23,16 +23,31 @@ function GenerateBlog() {
   const [loading, setLoading] =
     useState(false);
 
+  /*
+   * Conversation currently visible
+   * on the Generate page.
+   *
+   * This allows the previous conversation
+   * to remain visible while a new response
+   * is being generated.
+   */
+  const [displayBlog, setDisplayBlog] =
+    useState(null);
+
   /* ==========================================
-     Workspace Status
+     Sync Active Blog
   ========================================== */
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     if (activeBlog) {
+      setDisplayBlog(activeBlog);
       setStatus("completed");
     } else {
+      setDisplayBlog(null);
       setStatus("welcome");
     }
   }, [activeBlog, loading]);
@@ -52,26 +67,50 @@ function GenerateBlog() {
       return;
     }
 
-    try {
-      setLoading(true);
-      setStatus("thinking");
+    /*
+     * Immediately show the user's prompt
+     * before Gemini starts generating.
+     */
+    const userMessage = {
+      role: "user",
+      content: prompt.trim(),
+      id: `temp-user-${Date.now()}`,
+    };
 
+    /*
+     * Preserve the currently visible
+     * conversation.
+     */
+    const previousMessages =
+      displayBlog?.messages || [];
+
+    /*
+     * Add the new user prompt immediately.
+     */
+    const conversationWhileThinking = {
+      ...(displayBlog || {}),
+      messages: [
+        ...previousMessages,
+        userMessage,
+      ],
+    };
+
+    /*
+     * Show the prompt + thinking animation.
+     */
+    setDisplayBlog(
+      conversationWhileThinking
+    );
+
+    setLoading(true);
+    setStatus("thinking");
+
+    try {
       const started = Date.now();
 
       /*
-       * Generation settings come directly
-       * from PromptSettings.
-       *
-       * Example:
-       *
-       * {
-       *   category: "Technology",
-       *   tone: "Professional",
-       *   length: "1000 Words",
-       *   language: "Telugu"
-       * }
+       * Send request to backend.
        */
-
       const response =
         await sendMessage(
           activeBlogId,
@@ -81,7 +120,9 @@ function GenerateBlog() {
 
       if (!response.success) {
         throw new Error(
-          response.message
+          response.message ||
+            response.error ||
+            "Failed to generate blog."
         );
       }
 
@@ -89,7 +130,6 @@ function GenerateBlog() {
        * Keep thinking animation visible
        * for at least 1 second.
        */
-
       const elapsed =
         Date.now() - started;
 
@@ -104,13 +144,51 @@ function GenerateBlog() {
       }
 
       /*
-       * Update conversation
-       * in context.
+       * Backend returns the updated
+       * conversation.
        */
+      const generatedConversation =
+        response.conversation;
 
-      addBlog(
-        response.conversation
-      );
+      /*
+       * IMPORTANT:
+       *
+       * The backend conversation should
+       * normally contain the complete
+       * conversation.
+       *
+       * Use it directly when available.
+       */
+      if (
+        generatedConversation &&
+        Array.isArray(
+          generatedConversation.messages
+        )
+      ) {
+        setDisplayBlog(
+          generatedConversation
+        );
+
+        /*
+         * Save the complete conversation
+         * to BlogContext/history.
+         */
+        addBlog(
+          generatedConversation
+        );
+      } else {
+        /*
+         * Fallback:
+         *
+         * If the backend response does not
+         * contain messages, keep the current
+         * visible conversation instead of
+         * clearing the screen.
+         */
+        setDisplayBlog(
+          conversationWhileThinking
+        );
+      }
 
       setStatus("completed");
     } catch (error) {
@@ -124,7 +202,23 @@ function GenerateBlog() {
           "Something went wrong."
       );
 
-      if (activeBlog) {
+      /*
+       * Keep the user's prompt and all
+       * previous content visible even
+       * when generation fails.
+       */
+      setDisplayBlog(
+        conversationWhileThinking
+      );
+
+      /*
+       * If there was previous content,
+       * remain in the completed state.
+       */
+      if (
+        conversationWhileThinking
+          ?.messages?.length
+      ) {
         setStatus("completed");
       } else {
         setStatus("welcome");
@@ -160,7 +254,7 @@ function GenerateBlog() {
       >
         <OutputArea
           status={status}
-          blog={activeBlog}
+          blog={displayBlog}
         />
       </div>
 

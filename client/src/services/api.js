@@ -133,7 +133,7 @@ export const sendMessage = async (
           language:
             generationSettings.language ||
             "English",
-        },
+        }
       }
     );
 
