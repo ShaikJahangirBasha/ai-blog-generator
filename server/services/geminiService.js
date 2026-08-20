@@ -30,6 +30,28 @@ Rules:
 `;
 
 /* ==========================================
+   Gemini Retry Configuration
+========================================== */
+
+const MAX_RETRIES = 3;
+
+const RETRY_DELAYS = [
+  1000,
+  2500,
+  5000,
+];
+
+/* ==========================================
+   Wait Helper
+========================================== */
+
+const wait = (milliseconds) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+};
+
+/* ==========================================
    Generate AI Response
 ========================================== */
 
@@ -149,60 +171,179 @@ REQUIREMENTS:
 `;
 
     /* ========================================
-       Gemini Request
+       Gemini Request Configuration
     ======================================== */
 
-    const response =
-      await axios.post(
-        `${API_URL}/${process.env.GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    const url =
+      `${API_URL}/${process.env.GEMINI_MODEL}` +
+      `:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+    const requestBody = {
+      contents: [
         {
-          contents: [
+          parts: [
             {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
+              text: prompt,
             },
           ],
-        }
-      );
+        },
+      ],
+    };
 
     /* ========================================
-       Extract Response
+       Retry Loop
     ======================================== */
 
-    const text =
-      response.data
-        ?.candidates?.[0]
-        ?.content?.parts?.[0]
-        ?.text;
+    let lastError = null;
 
-    if (!text) {
+    for (
+      let attempt = 0;
+      attempt <= MAX_RETRIES;
+      attempt++
+    ) {
+      try {
+        console.log(
+          `🤖 Gemini request attempt ${
+            attempt + 1
+          }/${MAX_RETRIES + 1}`
+        );
+
+        const response =
+          await axios.post(
+            url,
+            requestBody,
+            {
+              timeout: 60000,
+            }
+          );
+
+        /* ====================================
+           Extract Response
+        ==================================== */
+
+        const text =
+          response.data
+            ?.candidates?.[0]
+            ?.content?.parts?.[0]
+            ?.text;
+
+        if (!text) {
+          return {
+            success: false,
+            error:
+              "Gemini returned an empty response.",
+          };
+        }
+
+        console.log(
+          "✅ Gemini response received"
+        );
+
+        return {
+          success: true,
+          text,
+        };
+      } catch (err) {
+        lastError = err;
+
+        const status =
+          err.response?.status;
+
+        const errorData =
+          err.response?.data;
+
+        console.error(
+          `❌ Gemini attempt ${
+            attempt + 1
+          } failed:`,
+          errorData ||
+            err.message
+        );
+
+        /* ====================================
+           Retry Only Temporary Errors
+        ==================================== */
+
+        const shouldRetry =
+          status === 503 ||
+          status === 429 ||
+          status === 500 ||
+          status === 502 ||
+          status === 504;
+
+        /*
+         * Don't retry authentication,
+         * invalid request, or other permanent
+         * errors.
+         */
+
+        if (
+          !shouldRetry ||
+          attempt === MAX_RETRIES
+        ) {
+          break;
+        }
+
+        const delay =
+          RETRY_DELAYS[attempt] ||
+          5000;
+
+        console.log(
+          `⏳ Gemini temporarily unavailable.` +
+          ` Retrying in ${delay / 1000}s...`
+        );
+
+        await wait(delay);
+      }
+    }
+
+    /* ========================================
+       Final Error
+    ======================================== */
+
+    const finalStatus =
+      lastError?.response?.status;
+
+    const finalMessage =
+      lastError?.response?.data?.error
+        ?.message ||
+      lastError?.message ||
+      "Gemini request failed.";
+
+    if (finalStatus === 503) {
       return {
         success: false,
         error:
-          "Gemini returned an empty response.",
+          "Gemini is temporarily overloaded. Please try again in a moment.",
+        status: 503,
+      };
+    }
+
+    if (finalStatus === 429) {
+      return {
+        success: false,
+        error:
+          "Gemini request limit reached. Please try again shortly.",
+        status: 429,
       };
     }
 
     return {
-      success: true,
-      text,
+      success: false,
+      error: finalMessage,
+      status: finalStatus,
     };
   } catch (err) {
     console.error(
-      "Gemini REST Error:",
-      err.response?.data ||
-        err.message
+      "Gemini Service Error:",
+      err
     );
 
     return {
       success: false,
       error:
-        err.response?.data?.error
-          ?.message ||
-        err.message,
+        err.message ||
+        "Failed to generate AI response.",
     };
   }
 };
