@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { PenSquare, Sparkles, ArrowRight } from "lucide-react";
+import { PenSquare, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 import useAuth from "../hooks/useAuth";
 import GoogleButton from "../components/auth/GoogleButton";
@@ -7,7 +8,7 @@ import GoogleButton from "../components/auth/GoogleButton";
 function LandingPage() {
   const { isAuthenticated } = useAuth();
 
-  // If already logged in, go directly to dashboard
+  // If already logged in, go directly to generate
   if (isAuthenticated) {
     return <Navigate to="/generate" replace />;
   }
@@ -17,157 +18,350 @@ function LandingPage() {
 
       {/* ================= Navbar ================= */}
 
-      <nav className="flex items-center justify-between px-6 md:px-10 py-6 border-b border-slate-800">
+      <motion.nav
+        initial={{
+          opacity: 0,
+          y: -30,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.7,
+          ease: "easeOut",
+        }}
+        className="
+          flex
+          items-center
+          justify-between
+          px-6
+          md:px-10
+          py-6
+          border-b
+          border-slate-800
+        "
+      >
 
-        <div className="flex items-center gap-3">
+        {/* Logo */}
 
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center">
+        <motion.div
+          initial={{
+            opacity: 0,
+            x: -30,
+          }}
+          animate={{
+            opacity: 1,
+            x: 0,
+          }}
+          transition={{
+            duration: 0.7,
+            delay: 0.2,
+            ease: "easeOut",
+          }}
+          className="flex items-center gap-3"
+        >
 
+          {/* Animated Logo Icon */}
+
+          <motion.div
+            initial={{
+              scale: 0.5,
+              rotate: -20,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              rotate: 0,
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.7,
+              delay: 0.3,
+              type: "spring",
+              stiffness: 180,
+              damping: 12,
+            }}
+            whileHover={{
+              scale: 1.08,
+              rotate: 5,
+            }}
+            className="
+              w-12
+              h-12
+              rounded-2xl
+              bg-blue-600
+              flex
+              items-center
+              justify-center
+              shadow-lg
+              shadow-blue-600/20
+            "
+          >
             <PenSquare size={24} />
+          </motion.div>
 
-          </div>
+          {/* Brand Text */}
 
           <div>
-
-            <h1 className="text-2xl font-bold">
+            <motion.h1
+              initial={{
+                opacity: 0,
+                x: -15,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
+              transition={{
+                duration: 0.6,
+                delay: 0.45,
+              }}
+              className="text-2xl font-bold"
+            >
               AI Blog Generator
-            </h1>
+            </motion.h1>
 
-            <p className="text-sm text-slate-400">
+            <motion.p
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              transition={{
+                duration: 0.6,
+                delay: 0.6,
+              }}
+              className="text-sm text-slate-400"
+            >
               AI Powered Writing Platform
-            </p>
-
+            </motion.p>
           </div>
 
-        </div>
+        </motion.div>
 
-        <div className="hidden md:block">
+        {/* Top Google Button */}
 
+        <motion.div
+          initial={{
+            opacity: 0,
+            x: 30,
+          }}
+          animate={{
+            opacity: 1,
+            x: 0,
+          }}
+          transition={{
+            duration: 0.7,
+            delay: 0.7,
+            ease: "easeOut",
+          }}
+          className="hidden md:block"
+        >
           <GoogleButton />
+        </motion.div>
 
-        </div>
+      </motion.nav>
 
-      </nav>
 
       {/* ================= Hero ================= */}
 
-      <section className="flex flex-col items-center justify-center text-center px-6 py-20">
+      <section
+        className="
+          flex
+          flex-col
+          items-center
+          justify-center
+          text-center
+          px-6
+          py-20
+        "
+      >
 
-        <div className="w-20 h-20 rounded-full bg-blue-600/20 flex items-center justify-center mb-8">
+        {/* ================= AI Sparkle ================= */}
 
-          <Sparkles
-            size={42}
-            className="text-blue-500"
-          />
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.4,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.8,
+            delay: 0.9,
+            type: "spring",
+            stiffness: 160,
+            damping: 12,
+          }}
+          className="
+            w-20
+            h-20
+            rounded-full
+            bg-blue-600/20
+            flex
+            items-center
+            justify-center
+            mb-8
+          "
+        >
 
-        </div>
+          <motion.div
+            animate={{
+              scale: [1, 1.08, 1],
+              rotate: [0, 4, -4, 0],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <Sparkles
+              size={42}
+              className="text-blue-500"
+            />
+          </motion.div>
 
-        <h1 className="text-5xl md:text-7xl font-bold leading-tight max-w-5xl">
+        </motion.div>
+
+
+        {/* ================= Main Heading ================= */}
+
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: -70,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.9,
+            delay: 1.05,
+            type: "spring",
+            stiffness: 100,
+            damping: 12,
+          }}
+          className="
+            text-5xl
+            md:text-7xl
+            font-bold
+            leading-tight
+            max-w-5xl
+          "
+        >
 
           Create Amazing
-          <span className="text-blue-500"> AI Blogs </span>
+
+          <motion.span
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.6,
+              delay: 1.45,
+            }}
+            className="
+              text-blue-500
+              inline-block
+              mx-2
+            "
+          >
+            AI Blogs
+          </motion.span>
 
           in Seconds
 
-        </h1>
+        </motion.h1>
 
-        <p className="mt-8 max-w-3xl text-lg text-slate-400 leading-8">
 
-          Generate SEO optimized blogs using Artificial Intelligence.
+        {/* ================= Description ================= */}
 
-          Organize them in your personal workspace.
+        <motion.p
+          initial={{
+            opacity: 0,
+            y: 25,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.8,
+            delay: 1.65,
+            ease: "easeOut",
+          }}
+          className="
+            mt-8
+            max-w-3xl
+            text-lg
+            text-slate-400
+            leading-8
+          "
+        >
+          Generate SEO optimized blogs using
+          Artificial Intelligence.
+
+          Organize them in your personal
+          workspace.
 
           Edit, export and access them anytime.
+        </motion.p>
 
-        </p>
 
-        {/* Google Login */}
+        {/* ================= Google Login ================= */}
 
-        <div className="mt-12 w-full max-w-sm">
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 35,
+            scale: 0.96,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.8,
+            delay: 1.9,
+            type: "spring",
+            stiffness: 120,
+            damping: 14,
+          }}
+          className="
+            mt-12
+            w-full
+            max-w-sm
+          "
+        >
 
-          <GoogleButton />
-
-        </div>
-
-        {/* Features */}
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24 w-full max-w-6xl">
-
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-            <h3 className="text-xl font-semibold">
-
-              🚀 AI Powered
-
-            </h3>
-
-            <p className="text-slate-400 mt-3">
-
-              Generate high-quality blogs in seconds.
-
-            </p>
-
-          </div>
-
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-            <h3 className="text-xl font-semibold">
-
-              📂 Workspace
-
-            </h3>
-
-            <p className="text-slate-400 mt-3">
-
-              ChatGPT-style history with search and organization.
-
-            </p>
-
-          </div>
-
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-
-            <h3 className="text-xl font-semibold">
-
-              📄 Export
-
-            </h3>
-
-            <p className="text-slate-400 mt-3">
-
-              Download blogs as PDF or copy with one click.
-
-            </p>
-
-          </div>
-
-        </div>
-
-        {/* CTA */}
-
-        <div className="mt-20">
-
-          <button
-            className="
-              flex
-              items-center
-              gap-3
-              px-8
-              py-4
-              rounded-2xl
-              bg-blue-600
-              hover:bg-blue-700
-              transition
-              font-semibold
-            "
+          <motion.div
+            whileHover={{
+              y: -3,
+              scale: 1.015,
+            }}
+            whileTap={{
+              scale: 0.98,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
-            Get Started
+            <GoogleButton />
+          </motion.div>
 
-            <ArrowRight size={20} />
-
-          </button>
-
-        </div>
+        </motion.div>
 
       </section>
 
